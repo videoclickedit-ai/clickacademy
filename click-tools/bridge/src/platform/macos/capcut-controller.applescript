@@ -86,9 +86,18 @@ on waitForNativeOpenPanel(baselineWindowCount)
 		tell application "System Events"
 			tell process capcutAppName
 				repeat with t in nativeDialogTitleCandidates
-					if exists window t then return true
+					if exists window t then
+						try
+							perform action "AXRaise" of window t
+						end try
+						delay 1.2 -- let the panel finish animating in and become key window
+						return true
+					end if
 				end repeat
-				if (count of windows) > baselineWindowCount then return true
+				if (count of windows) > baselineWindowCount then
+					delay 1.2
+					return true
+				end if
 			end tell
 		end tell
 		delay 1
@@ -102,10 +111,11 @@ end waitForNativeOpenPanel
 on navigateAndSelect(filePath)
 	tell application "System Events"
 		try
+			delay 0.4
 			keystroke "G" using {command down, shift down}
-			delay 0.6
+			delay 0.8
 			keystroke filePath
-			delay 0.3
+			delay 0.4
 			key code 36 -- Return: navigate to / select the file
 			delay 0.8
 			key code 36 -- Return: confirm the Importar/Open button
