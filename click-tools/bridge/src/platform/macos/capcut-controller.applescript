@@ -80,6 +80,37 @@ end openImportScreen
 -- Polls for the native Open panel to appear (it does once the user clicks
 -- CapCut's own "Importar" button — a manual step we ask for via notification
 -- since that button isn't accessibility-scriptable).
+-- Clicks the title bar of a window (a safe, universal target on every macOS
+-- window — never selects/deletes/changes anything) to force it to become
+-- the real key window before we send it keystrokes. Computed from the
+-- window's own position/size (both already in the same point-based
+-- coordinate space AppleScript uses for clicking), not guessed screen
+-- pixels, so it's independent of Retina scaling or window placement.
+on focusWindowByTitleBarClick(t)
+	tell application "System Events"
+		tell process capcutAppName
+			try
+				perform action "AXRaise" of window t
+			end try
+			try
+				set winPos to position of window t
+				set winSize to size of window t
+			on error
+				return false
+			end try
+		end tell
+	end tell
+	set clickX to (item 1 of winPos) + ((item 1 of winSize) / 2)
+	set clickY to (item 2 of winPos) + 14
+	try
+		tell application "System Events" to click at {clickX, clickY}
+	on error errText
+		log "[CapCut] Title bar click failed: " & errText
+		return false
+	end try
+	return true
+end focusWindowByTitleBarClick
+
 on waitForNativeOpenPanel(baselineWindowCount)
 	set waited to 0
 	repeat while waited < maxWaitSeconds
@@ -87,9 +118,7 @@ on waitForNativeOpenPanel(baselineWindowCount)
 			tell process capcutAppName
 				repeat with t in nativeDialogTitleCandidates
 					if exists window t then
-						try
-							perform action "AXRaise" of window t
-						end try
+						my focusWindowByTitleBarClick(t)
 						delay 1.2 -- let the panel finish animating in and become key window
 						return true
 					end if
