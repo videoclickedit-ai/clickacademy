@@ -79,79 +79,77 @@ end openImportScreen
 
 -- Polls for the native Open panel to appear (it does once the user clicks
 -- CapCut's own "Importar" button — a manual step we ask for via notification
--- since that button isn't accessibility-scriptable).
--- Clicks the title bar of a window (a safe, universal target on every macOS
--- window — never selects/deletes/changes anything) to force it to become
--- the real key window before we send it keystrokes. Computed from the
--- window's own position/size (both already in the same point-based
--- coordinate space AppleScript uses for clicking), not guessed screen
--- pixels, so it's independent of Retina scaling or window placement.
-on focusWindowByTitleBarClick(t)
-	tell application "System Events"
-		tell process capcutAppName
-			try
-				perform action "AXRaise" of window t
-			end try
-			try
-				set winPos to position of window t
-				set winSize to size of window t
-			on error
-				return false
-			end try
-		end tell
-	end tell
-	set clickX to (item 1 of winPos) + ((item 1 of winSize) / 2)
-	set clickY to (item 2 of winPos) + 14
-	try
-		tell application "System Events" to click at {clickX, clickY}
-	on error errText
-		log "[CapCut] Title bar click failed: " & errText
-		return false
-	end try
-	return true
-end focusWindowByTitleBarClick
-
+-- since that button isn't accessibility-scriptable). Returns the matched
+-- window title, or "" if it never showed up.
 on waitForNativeOpenPanel(baselineWindowCount)
 	set waited to 0
 	repeat while waited < maxWaitSeconds
 		tell application "System Events"
 			tell process capcutAppName
 				repeat with t in nativeDialogTitleCandidates
-					if exists window t then
-						my focusWindowByTitleBarClick(t)
-						delay 1.2 -- let the panel finish animating in and become key window
-						return true
-					end if
+					if exists window t then return (t as string)
 				end repeat
-				if (count of windows) > baselineWindowCount then
-					delay 1.2
-					return true
-				end if
 			end tell
 		end tell
 		delay 1
 		set waited to waited + 1
 	end repeat
-	return false
+	return ""
 end waitForNativeOpenPanel
 
 -- Once the native Open panel is confirmed open, jump straight to the exact
--- file via "Go to Folder" instead of navigating folders by hand.
-on navigateAndSelect(filePath)
+-- file via "Go to Folder". Unlike CapCut's own custom UI, this panel is a
+-- standard system NSOpenPanel, so its internal elements (the Go-to-Folder
+-- sheet's text field) ARE exposed to Accessibility — we set the field's
+-- value directly instead of relying on simulated keystrokes landing in the
+-- right place, which is what kept failing.
+on navigateAndSelect(filePath, panelTitle)
 	tell application "System Events"
-		try
-			delay 0.4
-			keystroke "G" using {command down, shift down}
-			delay 0.8
-			keystroke filePath
-			delay 0.4
-			key code 36 -- Return: navigate to / select the file
-			delay 0.8
-			key code 36 -- Return: confirm the Importar/Open button
-		on error errText
-			log "[CapCut] Native panel automation failed: " & errText
-			return false
-		end try
+		tell process capcutAppName
+			try
+				perform action "AXRaise" of window panelTitle
+			end try
+			delay 0.6
+			log "[CapCut] Sending Cmd+Shift+G (Go to Folder)..."
+			try
+				keystroke "G" using {command down, shift down}
+			on error errText
+				log "[CapCut] Cmd+Shift+G failed: " & errText
+				return false
+			end try
+			delay 1
+
+			set fieldSet to false
+			try
+				if exists sheet 1 of window panelTitle then
+					set tf to text field 1 of sheet 1 of window panelTitle
+					set value of tf to filePath
+					set fieldSet to true
+					log "[CapCut] Set the Go-to-Folder field directly to: " & filePath
+				else
+					log "[CapCut] No sheet found after Cmd+Shift+G — the shortcut may not have registered."
+				end if
+			on error errText
+				log "[CapCut] Could not access the Go-to-Folder field directly: " & errText
+			end try
+
+			if not fieldSet then
+				log "[CapCut] Falling back to typing the path via keystroke."
+				try
+					keystroke filePath
+				on error errText
+					log "[CapCut] Typing the path failed: " & errText
+					return false
+				end try
+			end if
+
+			delay 0.5
+			log "[CapCut] Confirming folder navigation (Return)..."
+			key code 36
+			delay 1
+			log "[CapCut] Confirming Import/Open (Return)..."
+			key code 36
+		end tell
 	end tell
 	return true
 end navigateAndSelect
@@ -202,17 +200,17 @@ on run argv
 		display notification "Hacé clic en 'Importar' dentro de CapCut para continuar" with title "Click Tools" subtitle "Esperando tu clic..."
 	end try
 
-	set panelAppeared to waitForNativeOpenPanel(baseline)
+	set panelTitle to waitForNativeOpenPanel(baseline)
 
-	if not panelAppeared then
+	if panelTitle is "" then
 		log "[FAILED] Timed out waiting for the native file picker. Did you click Importar inside CapCut?"
 		revealInFinder(filePath)
 		return
 	end if
 
-	log "[CapCut] Native file picker detected."
+	log "[CapCut] Native file picker detected: " & panelTitle
 	log "[IMPORT_ATTEMPTED strategy=accessibility-ui]"
-	set navigated to navigateAndSelect(filePath)
+	set navigated to navigateAndSelect(filePath, panelTitle)
 
 	if navigated then
 		log "[Click Tools] Navigated to the file and confirmed selection."
