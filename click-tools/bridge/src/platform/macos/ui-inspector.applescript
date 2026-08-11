@@ -1,39 +1,18 @@
 -- Diagnostic tool (not part of the CapCutController contract).
 --
--- Dumps CapCut's accessibility tree (menu bar + a depth-limited walk of the
--- frontmost window) so we can read the REAL names of buttons/menu items
--- instead of guessing them. Only needed if Strategy A (clipboard paste)
--- turns out not to work reliably and we need to build Strategy C
--- (accessibility-driven Import menu automation).
+-- Dumps CapCut's native menu bar (top-level menus + their items) so we can
+-- read the REAL names of menu entries (e.g. is there a File > Import?)
+-- instead of guessing them. This is the input for building Strategy C
+-- (accessibility-driven menu automation) if Strategy A (clipboard paste)
+-- doesn't work.
 --
--- Depth is capped at 4 levels because "entire contents" on a modern
--- Electron/Qt app like CapCut can recurse into thousands of nodes and hang.
+-- Kept deliberately simple: no deep UI-element tree walk. Electron/Qt apps
+-- like CapCut can have huge, slow accessibility trees, and a menu bar dump
+-- is usually enough to find the Import entry.
 --
 -- Usage: osascript ui-inspector.applescript > capcut-ui-dump.txt
 
 property capcutAppName : "CapCut"
-property maxDepth : 4
-
-on describeElement(el, depth, indent)
-	if depth > maxDepth then return
-	try
-		set r to role of el as string
-	on error
-		set r to "?"
-	end try
-	try
-		set n to name of el as string
-	on error
-		set n to ""
-	end try
-	log indent & r & " | " & n
-	try
-		set kids to UI elements of el
-		repeat with k in kids
-			describeElement(k, depth + 1, indent & "  ")
-		end repeat
-	end try
-end describeElement
 
 tell application "System Events"
 	if not (exists process capcutAppName) then
@@ -54,21 +33,29 @@ tell application "System Events"
 					repeat with i in itemNames
 						log "  - " & i
 					end repeat
+				on error errText
+					log "  (could not read items: " & errText & ")"
 				end try
 			end repeat
 		on error errText
 			log "Could not read menu bar: " & errText
 		end try
 
-		log "===== FRONTMOST WINDOW (depth-limited walk, max " & maxDepth & ") ====="
+		log "===== WINDOW INFO ====="
 		try
 			set winCount to count of windows
 			log "Window count: " & winCount
 			if winCount > 0 then
-				my describeElement(window 1, 0, "")
+				log "Window 1 name: " & (name of window 1 as string)
+				try
+					set btnNames to name of every button of window 1
+					log "Buttons in window 1: " & btnNames
+				on error errText
+					log "Could not list buttons: " & errText
+				end try
 			end if
 		on error errText
-			log "Could not read window elements: " & errText
+			log "Could not read window info: " & errText
 		end try
 	end tell
 end tell
