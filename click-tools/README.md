@@ -43,23 +43,29 @@ manualmente y volvé a correr el script.
    nombre, y **decidimos no adivinar coordenadas de píxeles a ciegas** dentro del proyecto real del
    usuario — el riesgo de tocar otra cosa por error no vale la pena para un atajo no verificado.
 4. **El panel nativo que abre ese botón sí es 100% accesible** (es un `NSOpenPanel` estándar del
-   sistema, no dibujado por CapCut) — confirmado que `Cmd+Shift+G` ("Ir a la carpeta") funciona ahí
-   para saltar directo a la ruta exacta del archivo.
+   sistema, no dibujado por CapCut) — pero automatizar `Cmd+Shift+G` ("Ir a la carpeta") ahí adentro
+   (incluso poniéndole el valor directo al campo de texto vía Accessibility, sin depender de que el
+   foco de teclado esté bien puesto) **falló repetidamente en pruebas reales**: el panel seguía
+   abriendo en su carpeta por defecto en vez de la del archivo. Después de varios intentos sin
+   identificar la causa exacta, se abandonó ese camino en vez de seguir agregando parches cada vez
+   más fràgiles.
 
 ### Diseño resultante (implementado)
 
-Todo automatizado excepto **un solo clic manual, seguro y visible**: el usuario hace clic en el
-botón "Importar" de CapCut cuando el script se lo pide (vía notificación de macOS). Todo lo demás
-es automático:
+Se abandonó automatizar la ventana de importar de CapCut. En cambio: la automatización deja el
+archivo descargado **ya seleccionado en el Finder**, y el usuario lo arrastra a CapCut con la mano
+— una sola acción, estándar de macOS, que no depende de que CapCut exponga nada a Accessibility
+porque es el usuario quien arrastra, no un script fingiendo hacerlo. Esto además cubre gratis el
+caso de soltarlo directo en la línea de tiempo, si el usuario quiere.
 
 1. Detecta CapCut, lo enfoca.
-2. Abre la pantalla de importar con `Cmd+I`.
-3. Muestra una notificación pidiendo el clic en "Importar".
-4. Espera (sondeando, hasta 25s) a que aparezca el panel nativo del sistema.
-5. En cuanto aparece, navega automáticamente con `Cmd+Shift+G` hasta el archivo exacto y confirma
-   la selección — el usuario nunca tiene que buscar el archivo descargado a mano.
+2. Abre el Finder con la imagen ya seleccionada (sin que el usuario tenga que buscarla).
+3. Notificación: "Arrastrá la imagen hacia CapCut".
+4. El usuario hace un solo arrastre, a donde quiera (panel de medios o línea de tiempo).
 
-Esto respeta la prioridad de estabilidad por sobre automatizar el 100% con un hack fràgil.
+Es más manual que el diseño anterior (que apuntaba a cero clics), pero es **determinístico y no
+depende de automatización frágil que no se pudo hacer confiable** — prioridad de estabilidad por
+sobre intentar automatizar el 100% con hacks cada vez menos confiables.
 
 ## Arquitectura (destino final)
 
@@ -110,9 +116,9 @@ sobre un supuesto que podría no cumplirse.
   Esto significa que **no se puede automatizar el 100% del flujo sin al menos un clic manual**
   en la versión actual de CapCut, salvo que se use automatización por coordenadas de píxeles
   (deliberadamente evitada por ser frágil y riesgosa sobre el proyecto real del usuario).
-- Arrastrar un archivo directo a la línea de tiempo tampoco es automatizable de forma estable por
-  el mismo motivo — la V1 deja la imagen lista en "Archivos multimedia" del proyecto, y el
-  arrastre a la línea de tiempo queda como el único paso manual restante.
+- Ni arrastrar a la línea de tiempo ni automatizar el diálogo de importar de CapCut resultaron
+  viables de forma estable — la V1 deja el archivo ya seleccionado en Finder y el usuario hace un
+  solo arrastre manual hacia CapCut (a donde quiera: panel de medios o línea de tiempo).
 - No se modifica el proyecto/drafts de CapCut por ingeniería inversa de sus archivos internos —
   eso queda explícitamente fuera de la V1.
 - El adapter de Windows (`bridge/src/platform/windows/`) todavía no está implementado — se

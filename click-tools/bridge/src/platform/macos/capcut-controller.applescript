@@ -7,40 +7,37 @@
 -- macOS will prompt for this automatically on first run.
 --
 -- ===== FASE 1 findings (documented, not guessed) =====
--- - CapCut's native macOS menu bar IS scriptable (confirmed via
---   ui-inspector.applescript): Archivo/File > Importar/Import exists as a
---   real menu item, with keyboard shortcut Cmd+I.
--- - Cmd+I opens CapCut's OWN "Archivos multimedia" browser screen (a custom
---   view listing already-imported project media), NOT the OS file picker
---   directly.
+-- - CapCut's native macOS menu bar IS scriptable: Archivo/File > Importar
+--   exists as a real menu item (Cmd+I), but that only opens CapCut's OWN
+--   "Archivos multimedia" browser screen, not the OS file picker.
 -- - That screen's inner "Importar" button, and CapCut's window content in
---   general, is NOT exposed to macOS Accessibility (confirmed empty
---   results scanning window children with System Events) — CapCut renders
---   its own UI with a custom toolkit that doesn't implement NSAccessibility
---   for internal widgets. We cannot click that button by name, and we
---   deliberately do NOT blind-click at guessed pixel coordinates inside the
---   user's real, live project — the risk of misclicking something else in
---   their actual work is not worth it for an unverified shortcut.
--- - The native macOS "Selecciona un recurso multimedia" Open panel that the
---   inner Importar button opens IS a standard, fully accessible NSOpenPanel
---   (system-provided, not custom-rendered), confirmed reachable and
---   scriptable with Cmd+Shift+G ("Go to Folder") to jump straight to an
---   exact file path.
+--   general, is NOT exposed to macOS Accessibility (confirmed: System
+--   Events scans of its windows come back empty). CapCut renders its UI
+--   with a custom toolkit that doesn't implement NSAccessibility for
+--   internal widgets, so we can't click that button by name.
+-- - The native "Selecciona un recurso multimedia" Open panel that the
+--   button opens IS a real, fully accessible NSOpenPanel — but automating
+--   "Go to Folder" (Cmd+Shift+G) inside it, including setting its text
+--   field's value directly, repeatedly failed in live testing (kept
+--   landing on the panel's default folder instead of the target file).
+--   The exact cause wasn't pinned down after several attempts, and rather
+--   than keep guessing at increasingly fragile keyboard/focus workarounds,
+--   we changed approach entirely (see below).
 --
 -- ===== Resulting design =====
--- Fully automated except ONE safe, visible manual click (the user clicking
--- CapCut's own "Importar" button, which they can see and trust). Everything
--- before and after that click is automated: detecting CapCut, focusing it,
--- opening the import screen (Cmd+I), waiting for the native panel to
--- appear, then navigating straight to the exact file and confirming — so
--- the user never has to search for the downloaded file themselves.
+-- Skip automating CapCut's import UI altogether. Instead: reveal the
+-- downloaded file in Finder, already selected, and ask the user to drag
+-- it into CapCut themselves — one simple, completely standard macOS
+-- action that works regardless of CapCut's accessibility support, since
+-- it's the user's own hand doing the drag, not a script pretending to be
+-- one. This also naturally covers dropping straight onto the timeline if
+-- the user wants, without needing fragile coordinate automation for that
+-- either.
 
 use AppleScript version "2.4"
 use scripting additions
 
 property capcutAppName : "CapCut"
-property nativeDialogTitleCandidates : {"Selecciona un recurso multimedia", "Select Media", "Select a media resource"}
-property maxWaitSeconds : 25
 
 -- ---------- Contract: isCapCutRunning() ----------
 on isCapCutRunning()
@@ -59,108 +56,16 @@ on focusCapCut()
 	end tell
 end focusCapCut
 
-on countCapCutWindows()
-	tell application "System Events"
-		tell process capcutAppName
-			return (count of windows)
-		end tell
-	end tell
-end countCapCutWindows
-
-on openImportScreen()
-	tell application "System Events"
-		tell process capcutAppName
-			set frontmost to true
-			delay 0.3
-			keystroke "i" using command down
-		end tell
-	end tell
-end openImportScreen
-
--- Polls for the native Open panel to appear (it does once the user clicks
--- CapCut's own "Importar" button — a manual step we ask for via notification
--- since that button isn't accessibility-scriptable). Returns the matched
--- window title, or "" if it never showed up.
-on waitForNativeOpenPanel(baselineWindowCount)
-	set waited to 0
-	repeat while waited < maxWaitSeconds
-		tell application "System Events"
-			tell process capcutAppName
-				repeat with t in nativeDialogTitleCandidates
-					if exists window t then return (t as string)
-				end repeat
-			end tell
-		end tell
-		delay 1
-		set waited to waited + 1
-	end repeat
-	return ""
-end waitForNativeOpenPanel
-
--- Once the native Open panel is confirmed open, jump straight to the exact
--- file via "Go to Folder". Unlike CapCut's own custom UI, this panel is a
--- standard system NSOpenPanel, so its internal elements (the Go-to-Folder
--- sheet's text field) ARE exposed to Accessibility — we set the field's
--- value directly instead of relying on simulated keystrokes landing in the
--- right place, which is what kept failing.
-on navigateAndSelect(filePath, panelTitle)
-	tell application "System Events"
-		tell process capcutAppName
-			try
-				perform action "AXRaise" of window panelTitle
-			end try
-			delay 0.6
-			log "[CapCut] Sending Cmd+Shift+G (Go to Folder)..."
-			try
-				keystroke "G" using {command down, shift down}
-			on error errText
-				log "[CapCut] Cmd+Shift+G failed: " & errText
-				return false
-			end try
-			delay 1
-
-			set fieldSet to false
-			try
-				if exists sheet 1 of window panelTitle then
-					set tf to text field 1 of sheet 1 of window panelTitle
-					set value of tf to filePath
-					set fieldSet to true
-					log "[CapCut] Set the Go-to-Folder field directly to: " & filePath
-				else
-					log "[CapCut] No sheet found after Cmd+Shift+G — the shortcut may not have registered."
-				end if
-			on error errText
-				log "[CapCut] Could not access the Go-to-Folder field directly: " & errText
-			end try
-
-			if not fieldSet then
-				log "[CapCut] Falling back to typing the path via keystroke."
-				try
-					keystroke filePath
-				on error errText
-					log "[CapCut] Typing the path failed: " & errText
-					return false
-				end try
-			end if
-
-			delay 0.5
-			log "[CapCut] Confirming folder navigation (Return)..."
-			key code 36
-			delay 1
-			log "[CapCut] Confirming Import/Open (Return)..."
-			key code 36
-		end tell
-	end tell
-	return true
-end navigateAndSelect
-
--- ---------- Fallback ----------
--- Reveals the file in Finder so the user has zero searching to do if
--- everything else fails.
+-- ---------- Contract: importImage(filePath) ----------
+-- Reveals the file in Finder, pre-selected, and asks the user to drag it
+-- into CapCut. Automation ends here — the drag itself is manual by design.
 on revealInFinder(filePath)
 	tell application "Finder"
 		activate
 		reveal (POSIX file filePath)
+		try
+			select (POSIX file filePath)
+		end try
 	end tell
 	return true
 end revealInFinder
@@ -192,33 +97,15 @@ on run argv
 		log "[CapCut] Could not confirm focus (continuing anyway)"
 	end if
 
-	set baseline to countCapCutWindows()
-	openImportScreen()
-	log "[CapCut] Import screen opened (Cmd+I)."
-	log "[Click Tools] Waiting for you to click the 'Importar' button inside CapCut..."
+	revealInFinder(filePath)
+	log "[Click Tools] Finder opened with the image already selected."
+	log "[IMPORT_ATTEMPTED strategy=manual-fallback]"
+
 	try
-		display notification "Hacé clic en 'Importar' dentro de CapCut para continuar" with title "Click Tools" subtitle "Esperando tu clic..."
+		display notification "Arrastrá la imagen (ya seleccionada en Finder) hacia CapCut" with title "Click Tools" subtitle "Un solo arrastre y listo"
 	end try
 
-	set panelTitle to waitForNativeOpenPanel(baseline)
-
-	if panelTitle is "" then
-		log "[FAILED] Timed out waiting for the native file picker. Did you click Importar inside CapCut?"
-		revealInFinder(filePath)
-		return
-	end if
-
-	log "[CapCut] Native file picker detected: " & panelTitle
-	log "[IMPORT_ATTEMPTED strategy=accessibility-ui]"
-	set navigated to navigateAndSelect(filePath, panelTitle)
-
-	if navigated then
-		log "[Click Tools] Navigated to the file and confirmed selection."
-		log "[Click Tools] MANUAL CHECK REQUIRED: look at CapCut now — did the image land in Archivos multimedia?"
-		log "[Click Tools] Report back: YES it appeared -> this whole flow is our FASE 2 import path."
-		log "[Click Tools] Report back: NO / something else happened -> tell me exactly what you saw."
-	else
-		log "[FAILED] Could not navigate the native picker."
-		revealInFinder(filePath)
-	end if
+	log "[Click Tools] MANUAL CHECK REQUIRED: arrastrá la imagen desde Finder hacia CapCut (al panel de medios o directo a la línea de tiempo)."
+	log "[Click Tools] Report back: YES si se importó bien -> este es nuestro flujo para FASE 2."
+	log "[Click Tools] Report back: NO / algo raro -> contame exactamente qué pasó."
 end run
