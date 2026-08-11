@@ -11,6 +11,13 @@ use scripting additions
 
 property capcutAppName : "CapCut"
 
+-- CapCut's File menu, localized. Confirmed via ui-inspector.applescript on a
+-- Spanish macOS install: menu bar item "Archivo" -> menu item "Importar".
+-- English installs presumably use "File" -> "Import" (not yet confirmed).
+-- Known limitation: this is a hardcoded lookup table, not real i18n.
+property fileMenuNames : {"Archivo", "File"}
+property importItemNames : {"Importar", "Import"}
+
 -- ---------- Contract: isCapCutRunning() ----------
 on isCapCutRunning()
 	tell application "System Events"
@@ -28,11 +35,71 @@ on focusCapCut()
 	end tell
 end focusCapCut
 
+-- ---------- Strategy C: native File > Import menu + Open panel ----------
+-- Confirmed via ui-inspector.applescript that CapCut has a real, scriptable
+-- "Archivo > Importar" menu item. Clicking it opens the standard macOS Open
+-- panel, which we drive with Cmd+Shift+G ("Go to Folder") since that lets us
+-- jump straight to an exact file path instead of guessing button/column
+-- names inside the panel.
+on tryImportViaMenu(filePath)
+	tell application "System Events"
+		if not (exists process capcutAppName) then return false
+		tell process capcutAppName
+			set frontmost to true
+			delay 0.3
+
+			set clickedFile to false
+			repeat with fName in fileMenuNames
+				if exists menu bar item fName of menu bar 1 then
+					try
+						click menu bar item fName of menu bar 1
+						delay 0.3
+						repeat with iName in importItemNames
+							if exists menu item iName of menu 1 of menu bar item fName of menu bar 1 then
+								click menu item iName of menu 1 of menu bar item fName of menu bar 1
+								set clickedFile to true
+								exit repeat
+							end if
+						end repeat
+					end try
+				end if
+				if clickedFile then exit repeat
+			end repeat
+
+			if not clickedFile then
+				log "[CapCut] Could not find File > Import menu item (tried: " & fileMenuNames & " / " & importItemNames & ")"
+				key code 53 -- Escape, in case a menu is still open
+				return false
+			end if
+		end tell
+	end tell
+
+	delay 1.2 -- give the Open panel time to appear
+
+	tell application "System Events"
+		try
+			keystroke "G" using {command down, shift down} -- "Go to Folder"
+			delay 0.6
+			keystroke filePath
+			delay 0.3
+			key code 36 -- Return: navigate to / select the file
+			delay 0.8
+			key code 36 -- Return: confirm the Open/Import button
+		on error errText
+			log "[CapCut] Open panel automation failed: " & errText
+			return false
+		end try
+	end tell
+
+	delay 1
+	return true
+end tryImportViaMenu
+
 -- ---------- Strategy A: clipboard paste ----------
 -- Copies the image to the system clipboard as image data and sends Cmd+V
--- to the frontmost CapCut window. This is the least invasive strategy: it
--- makes no assumption about CapCut's menu/accessibility tree, only that
--- pasting an image into the media panel is supported (needs to be verified).
+-- to the frontmost CapCut window. Kept as a secondary attempt in case the
+-- menu strategy fails for some reason — confirmed NOT sufficient on its own
+-- during the FASE 1 spike (CapCut did not accept a bare Cmd+V paste).
 on tryImportViaClipboard(filePath)
 	try
 		set imgFile to POSIX file filePath
@@ -51,7 +118,7 @@ on tryImportViaClipboard(filePath)
 		end tell
 	end tell
 	delay 1
-	return true -- "sent", not proof of import — caller must confirm visually for this spike
+	return true -- "sent", not proof of import
 end tryImportViaClipboard
 
 -- ---------- Strategy D: fallback ----------
@@ -92,17 +159,25 @@ on run argv
 		log "[CapCut] Could not confirm focus (continuing anyway)"
 	end if
 
-	log "[CapCut] Importing asset via clipboard paste (Strategy A)..."
-	log "[IMPORT_ATTEMPTED strategy=clipboard]"
-	set sent to tryImportViaClipboard(filePath)
+	log "[CapCut] Importing asset via File > Import menu (Strategy C)..."
+	log "[IMPORT_ATTEMPTED strategy=accessibility-ui]"
+	set menuWorked to tryImportViaMenu(filePath)
 
-	if sent then
-		log "[Click Tools] Cmd+V sent to CapCut."
+	if menuWorked then
+		log "[Click Tools] Menu import sequence completed."
 		log "[Click Tools] MANUAL CHECK REQUIRED: look at CapCut now — did the image land in the media panel / timeline?"
-		log "[Click Tools] Report back: YES it appeared -> Strategy A works, we can automate confirmation next."
-		log "[Click Tools] Report back: NO nothing happened -> Strategy A is not viable, move to Strategy C (menu/accessibility) with real UI element names."
+		log "[Click Tools] Report back: YES it appeared -> Strategy C works, this is our import path for FASE 2."
+		log "[Click Tools] Report back: NO nothing happened / wrong dialog -> tell me exactly what you saw on screen."
 	else
-		log "[FAILED] Could not send paste command to CapCut"
-		revealInFinder(filePath)
+		log "[CapCut] Menu strategy failed, falling back to clipboard paste (Strategy A)..."
+		log "[IMPORT_ATTEMPTED strategy=clipboard]"
+		set sent to tryImportViaClipboard(filePath)
+		if sent then
+			log "[Click Tools] Cmd+V sent to CapCut as a fallback attempt."
+			log "[Click Tools] MANUAL CHECK REQUIRED: look at CapCut now."
+		else
+			log "[FAILED] Both menu and clipboard strategies failed."
+			revealInFinder(filePath)
+		end if
 	end if
 end run
