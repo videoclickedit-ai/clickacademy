@@ -13,8 +13,8 @@ Ese spike vive en [`scripts/fase1-spike/`](./scripts/fase1-spike/) y usa el adap
 
 > **Nota de entorno:** este spike se escribió y se probó estructuralmente (el generador de
 > `test.png`, decodificación del PNG) desde un sandbox Linux sin GUI, que no puede ejecutar CapCut
-> Desktop ni Accessibility APIs de macOS. El AppleScript en sí **todavía no fue verificado contra
-> un CapCut real** — eso requiere correrlo en tu Mac. Instrucciones abajo.
+> Desktop ni Accessibility APIs de macOS. Todo lo que involucra CapCut real fue verificado
+> iterando en vivo con el usuario en su Mac.
 
 ### Cómo correr el spike (macOS, con CapCut abierto y un proyecto cargado)
 
@@ -27,39 +27,39 @@ La primera vez, macOS va a pedir permiso de Accessibility para la Terminal
 (**System Settings → Privacy & Security → Accessibility**). Si no aparece el diálogo, agregalo
 manualmente y volvé a correr el script.
 
-El script:
-1. Genera `test.png` (400x300, sin dependencias — decodifica un base64 embebido).
-2. Detecta si CapCut está corriendo (`isCapCutRunning`).
-3. Lo enfoca (`focusCapCut`).
-4. Intenta la **Estrategia A: pegar desde el portapapeles** — copia la imagen al clipboard como
-   imagen y envía `Cmd+V` a CapCut. Es la estrategia menos frágil porque no depende de conocer la
-   estructura interna de menús/accesibilidad de CapCut, solo de que CapCut acepte pegar imágenes
-   en el panel de medios.
-5. Imprime logs con las etapas: `CAPCUT_DETECTED`, `IMPORT_ATTEMPTED`, y pide **confirmación
-   visual manual** (todavía no hay forma automatizada de verificar que el import ocurrió).
+### Qué se probó y qué se descartó
 
-### Qué necesito que me reportes
+1. **Estrategia A (pegar desde el portapapeles / Cmd+V):** descartada. Confirmado en vivo que
+   CapCut no acepta pegar una imagen copiada directo en su panel de medios — Cmd+V no hizo nada.
+2. **Estrategia C, intento 1 (clic ciego en el menú Archivo → Importar + navegar el diálogo con
+   Cmd+Shift+G):** parcialmente funcionaba, pero **Archivo → Importar (o su atajo Cmd+I) no abre
+   el selector de archivos del sistema directamente** — abre la propia pantalla de CapCut
+   ("Archivos multimedia"), que lista lo ya importado en el proyecto. Ahí adentro hay un botón
+   "Importar" que sí abre el selector nativo del sistema.
+3. **Hallazgo clave:** ese botón interno (y en general todo el contenido de las ventanas de
+   CapCut) **no está expuesto a la Accessibility API de macOS** — un escaneo con System Events no
+   encontró ningún botón. CapCut dibuja su interfaz con un toolkit propio que no implementa
+   `NSAccessibility` para sus widgets internos. Por eso no podemos hacerle clic a ese botón por
+   nombre, y **decidimos no adivinar coordenadas de píxeles a ciegas** dentro del proyecto real del
+   usuario — el riesgo de tocar otra cosa por error no vale la pena para un atajo no verificado.
+4. **El panel nativo que abre ese botón sí es 100% accesible** (es un `NSOpenPanel` estándar del
+   sistema, no dibujado por CapCut) — confirmado que `Cmd+Shift+G` ("Ir a la carpeta") funciona ahí
+   para saltar directo a la ruta exacta del archivo.
 
-Después de correrlo, decime:
-- ¿Detectó CapCut corriendo? (sí/no)
-- ¿Lo enfocó/trajo al frente? (sí/no)
-- ¿Al hacer Cmd+V apareció la imagen en el panel de medios o timeline de CapCut? (sí/no)
-- Cualquier error que haya impreso el script.
+### Diseño resultante (implementado)
 
-**Si Strategy A (clipboard) funciona:** es la ruta ganadora — simple, estable, sin necesidad de
-mapear la interfaz de CapCut. Paso siguiente: agregar una forma de confirmar el import
-automáticamente (o aceptar que el usuario vea el resultado en CapCut) e integrar esto al bridge.
+Todo automatizado excepto **un solo clic manual, seguro y visible**: el usuario hace clic en el
+botón "Importar" de CapCut cuando el script se lo pide (vía notificación de macOS). Todo lo demás
+es automático:
 
-**Si Strategy A no funciona:** corré el diagnóstico de accesibilidad para mapear los nombres reales
-de menús/botones de CapCut, y con eso construimos la Estrategia C (automatización vía menú
-File → Import):
+1. Detecta CapCut, lo enfoca.
+2. Abre la pantalla de importar con `Cmd+I`.
+3. Muestra una notificación pidiendo el clic en "Importar".
+4. Espera (sondeando, hasta 25s) a que aparezca el panel nativo del sistema.
+5. En cuanto aparece, navega automáticamente con `Cmd+Shift+G` hasta el archivo exacto y confirma
+   la selección — el usuario nunca tiene que buscar el archivo descargado a mano.
 
-```bash
-osascript ../../bridge/src/platform/macos/ui-inspector.applescript > capcut-ui-dump.txt
-```
-
-Mandame ese archivo y con los nombres reales de elementos escribo la Estrategia C correctamente,
-en vez de adivinar nombres de menú que probablemente no coincidan con los reales de CapCut.
+Esto respeta la prioridad de estabilidad por sobre automatizar el 100% con un hack fràgil.
 
 ## Arquitectura (destino final)
 
@@ -104,6 +104,15 @@ sobre un supuesto que podría no cumplirse.
 
 - CapCut Desktop no tiene una API pública ni SDK oficial. Todo lo que hacemos acá es
   automatización de UI/OS (clipboard, Accessibility), no integración oficial.
+- CapCut no acepta pegar imágenes desde el portapapeles (Cmd+V) en su panel de medios.
+- El contenido interno de las ventanas de CapCut (botones, listas, timeline) no está expuesto a
+  la Accessibility API de macOS — solo su menú nativo de arriba (Archivo, Editar, etc.) lo está.
+  Esto significa que **no se puede automatizar el 100% del flujo sin al menos un clic manual**
+  en la versión actual de CapCut, salvo que se use automatización por coordenadas de píxeles
+  (deliberadamente evitada por ser frágil y riesgosa sobre el proyecto real del usuario).
+- Arrastrar un archivo directo a la línea de tiempo tampoco es automatizable de forma estable por
+  el mismo motivo — la V1 deja la imagen lista en "Archivos multimedia" del proyecto, y el
+  arrastre a la línea de tiempo queda como el único paso manual restante.
 - No se modifica el proyecto/drafts de CapCut por ingeniería inversa de sus archivos internos —
   eso queda explícitamente fuera de la V1.
 - El adapter de Windows (`bridge/src/platform/windows/`) todavía no está implementado — se
