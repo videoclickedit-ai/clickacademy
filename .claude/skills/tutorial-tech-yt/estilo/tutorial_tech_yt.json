@@ -1,0 +1,127 @@
+{
+  "estilo": "Tutorial Tech YT",
+  "nota": "Valores medidos en la referencia (min 0-1). Las claves siguen la lista de la skill nuevo-estilo; alinear con la estructura exacta de minimalist_edition.json antes del primer build (no estaba disponible en esta sesion).",
+  "prioridad": ["correcciones_usuario_capcut", "indicacion_escrita", "referencias"],
+  "decisiones_usuario": [
+    "En las diferencias entre la indicacion escrita y la referencia, gana lo medido en la referencia.",
+    "Subtitulos solo en frases clave, no continuos.",
+    "Enfasis por bloque completo con fondo de color, sin resaltar palabras sueltas.",
+    "Pocos zooms (apertura, cambio de plano y pantalla), no uno por idea.",
+    "Texto cinetico con Akkordeon en mayusculas."
+  ],
+  "formato": {
+    "canvas": { "ancho": 1920, "alto": 1080, "proporcion": "16:9" },
+    "fps": 25,
+    "referencia_resolucion": "640x360"
+  },
+  "colores": {
+    "rojo_fondo": "#D62C21",
+    "rojo_texto": "#E22F20",
+    "blanco_fondo": "#F7F7F7",
+    "blanco_texto_sobre_rojo": "#F3E9E8",
+    "subtitulo": "#F3F2F2",
+    "grafica_fondo_oscuro": "#131313",
+    "violeta_acento": "#714BDE",
+    "violeta_placa_fondo": "#7A54DC",
+    "violeta_texto_manuscrito": "#5F42BF",
+    "placa_tarjeta_clara": "#ECE6F9",
+    "broll_fondo_gris": "#E0E0E0",
+    "piel_referencia": "#A37771",
+    "pared_referencia": "#4F5564"
+  },
+  "tipografias": {
+    "cinetica": { "fuente": "Akkordeon", "caja": "mayusculas", "elegida_por_usuario": true, "referencia_parecida": "Anton" },
+    "subtitulo": { "parecida": "SF Pro Display Medium", "alternativa": "Inter Medium", "caja": "oracion", "tracking": "apretado", "estimado": true },
+    "manuscrita": { "parecida": "Caveat Brush", "alternativa": "Kalam Bold", "estimado": true },
+    "versalitas": { "parecida": "sans bold", "caja": "mayusculas", "tracking": "muy abierto", "estimado": true }
+  },
+  "textos": {
+    "cinetica_pantalla_completa": {
+      "uso": "frase-promesa del hook, tapa la camara",
+      "variantes": [
+        { "fondo": "#D62C21", "texto": "#F3E9E8", "palabras_por_linea": 2, "alto_mayuscula_px_1080": 216, "size_capcut_estimado": 59 },
+        { "fondo": "#F7F7F7", "texto": "#E22F20", "palabras_por_linea": 1, "alto_mayuscula_px_1080": 258, "size_capcut_estimado": 70 }
+      ],
+      "ajustar_size_hasta_alto_mayuscula": true,
+      "posicion": { "x_pct": 50, "y_pct": 50 },
+      "interlineado": 1.08,
+      "borde": false,
+      "sombra": false,
+      "fondo_degradado_radial": true,
+      "entrada": { "tipo": "fade", "duracion_s": 0.1, "rebote": false },
+      "intervalo_entre_bloques_s": [0.12, 0.4],
+      "duracion_placa_s": [1.1, 1.3]
+    },
+    "subtitulo": {
+      "uso": "solo frases clave (1 en el minuto 1), no continuo",
+      "palabras_por_bloque": 4,
+      "alto_asc_desc_px_1080": 51,
+      "size_capcut_estimado": 10.5,
+      "posicion": { "x_pct": 50, "y_pct": 85, "y_px_1080": 918 },
+      "sombra": "suave",
+      "entrada": { "tipo": "palabra_por_palabra", "s_por_palabra": 0.12 }
+    },
+    "resaltado": {
+      "por_palabra": false,
+      "criterio": "enfasis por bloque completo con fondo de color plano; sin amarillo"
+    }
+  },
+  "capas": {
+    "logos_flotantes": { "ancho_pct": 19, "posiciones": [{ "x_pct": 82, "y_pct": 47 }, { "x_pct": 20, "y_pct": 49 }], "duracion_s": [2.2, 2.6], "entrada": "zoom desde 30% + giro -20deg, 0.25s", "salida": "desaturar o deslizar con desenfoque, 0.15s" },
+    "miniaturas_prueba_social": { "cantidad": 4, "por_lado": 2, "ancho_pct": 23, "duracion_s": 3.4, "entrada": "pop escalonado, 4 en 0.4s" },
+    "etiqueta_canal": { "posicion": { "x_pct": 50, "y_pct": 94 }, "duracion_s": 3.7 },
+    "grafica_timeline": { "fondo": "#131313", "acento": "#714BDE", "duracion_s": 3.8, "animacion": "puntos 1 a 7, ~0.35s cada uno; linea inferior con fade" },
+    "placa_violeta": { "fondo": "#7A54DC", "tarjeta": "#ECE6F9", "duracion_s": 2.1, "entrada": "barrido de luz blanca 0.25s" },
+    "broll_tarjeta_vertical": { "proporcion": "9:16", "ancho_pct": 25, "alto_pct": 81, "fondo": "#E0E0E0", "clips_s": [1.0, 0.35, 0.8], "entrada": "destello rojo 0.35s" },
+    "camara_en_recuadro_pantalla": { "posicion": "abajo-derecha", "ancho_pct": 17, "esquinas_redondeadas": true }
+  },
+  "ritmo": {
+    "hook_0_24s": { "cambio_cada_s": 1.26, "rango_s": [0.12, 3.8], "silencios_recortados_mayores_a_s": 0.15 },
+    "explicacion_24_32s": { "cambio_cada_s": 2.7, "jump_cuts_mismo_encuadre": true },
+    "pantalla_32_60s": { "cambio_cada_s": 27, "pausas_recortadas": false },
+    "cortes_duros_min1": 10,
+    "transiciones": [
+      { "tipo": "light leak rojo", "duracion_s": 0.35, "uso": "jump cut en hook y entrada a B-roll" },
+      { "tipo": "barrido de luz blanca", "duracion_s": 0.25, "uso": "entrada a placa grafica" },
+      { "tipo": "corte seco", "uso": "resto" }
+    ]
+  },
+  "zooms": {
+    "apertura": { "tipo": "keyframe", "de_pct": 133, "a_pct": 100, "duracion_s": 0.3, "curva": "ease-out" },
+    "hook": { "escala_pct": 100, "plano": "medio corto", "relativo_a_toma_abierta_pct": 111 },
+    "explicacion": { "escala_pct": 90, "tipo": "corte a plano abierto" },
+    "pantalla": { "escala_pct": 200, "tipo": "reencuadre por corte", "estimado": true },
+    "zoom_por_frase": false
+  },
+  "color": {
+    "saturacion_media": 0.31,
+    "luminancia_p5": 0.013,
+    "luminancia_p95": 0.59,
+    "relacion_R_B": 0.93,
+    "vineta_esquinas_vs_centro": 0.52,
+    "nitidez_cara_vs_fondo": 3.7,
+    "capcut_estimado": { "contraste": 12, "sombras": -10, "negros": -10, "saturacion": -5, "temperatura": -7, "vineta": 30 },
+    "aplicar_en_placas": false
+  },
+  "estructura": [
+    { "tramo": "hook", "desde_s": 0, "hasta_s": 21.8 },
+    { "tramo": "ejemplo_broll", "desde_s": 21.8, "hasta_s": 24.0 },
+    { "tramo": "explicacion_camara", "desde_s": 24.0, "hasta_s": 32.25 },
+    { "tramo": "tutorial_pantalla", "desde_s": 32.25, "hasta_s": null }
+  ],
+  "audio": {
+    "lufs_hook_y_explicacion": -21.4,
+    "lufs_pantalla": -26.7,
+    "voz_objetivo_lufs": -14,
+    "musica": { "presente_en": ["hook", "explicacion"], "ausente_en": ["tutorial_pantalla"], "db_bajo_voz": [20, 25], "genero": "tech/electronica instrumental (estimado, no verificado)", "bpm": null },
+    "sfx": [
+      { "evento": "light leak / barrido", "tipo": "whoosh", "estimado": true },
+      { "evento": "corte de grafica a camara", "tipo": "swish", "estimado": true },
+      { "evento": "bloque de texto cinetico", "tipo": "pop/clic", "estimado": true },
+      { "evento": "entrada de miniaturas", "tipo": "pop/clic", "estimado": true }
+    ],
+    "sfx_en_pantalla": false,
+    "sfx_db_bajo_voz": [6, 10]
+  },
+  "reglas_aprendidas": []
+}
