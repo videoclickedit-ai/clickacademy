@@ -58,13 +58,18 @@ en HTML, Chromium captura frame por frame y ffmpeg codifica. La plantilla en
 7. **SFX.** Editá `sfx_events.json`: un evento por cada pop, click, impacto y transición, en el
    mismo frame que el visual. Los tipos disponibles están documentados al inicio de `scripts/sfx.py`.
    Los SFX acompañan; la voz siempre manda (gain 0.1–0.6).
+   **Si el usuario manda sus propios sonidos, usalos primero** (tipo `muestra`) y sintetizá solo lo
+   que falte. Medilos con `python3 scripts/picos_audio.py audio/*.wav`: un whoosh o un boom tienen
+   el pico en el medio, no al principio. Alineá el **pico** con el frame del evento (arrancá el
+   archivo `pico × fps` frames antes o recortá el inicio con `desde_seg`). Un archivo de 8 s con
+   build y cola es un riser + impacto, no música: no lo uses como fondo.
 
 8. **Render final.** `bash scripts/build.sh <proyecto>` → `<proyecto>/out/final.mp4`
    (unos 5 min para 800 frames; correlo en segundo plano). El build normaliza a -14 LUFS para Instagram.
 
 9. **Entregar.** Mandá el MP4 con la herramienta de archivos si existe, y en pocas líneas:
-   duración, qué agregaste que no estaba en el guion, que no tiene música (sugerí un audio en
-   tendencia a volumen bajo), la fuente usada, que la sincronía es estimada (±3 frames) y qué
+   duración, qué agregaste que no estaba en el guion, qué sonido usaste en cada momento, si no
+   tiene música (sugerí un audio en tendencia a volumen bajo), la fuente usada, que la sincronía es estimada (±3 frames) y qué
    segundo conviene usar de portada.
 
 ## Sistema visual

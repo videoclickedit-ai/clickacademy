@@ -11,7 +11,9 @@ Tipos de evento (todos aceptan "frame", "gain", "pan" de -1 a 1):
   chime    -                             notificación (dos notas)
   shimmer  dur=0.9                       brillo
   riser    dur=0.6                       subida antes de un impacto
-  conteo   desde, hasta, pasos=[[frame_limite, cada_n_frames], ...]   tics acelerados
+  moneda   -                             moneda / caja registradora corta
+  conteo   desde, hasta, pasos=[[frame_limite, cada_n_frames], ...], pendiente=6 (Hz por frame; negativa = baja)
+  muestra  archivo="audio/x.wav", desde_seg=0, hasta_seg=None   usa un audio del usuario (SFX real)
   tipeo    desde, teclas=30, cada=1.2    teclado
   serie    frames=[...], sub={evento}    el mismo evento en varios frames
 """
@@ -92,6 +94,16 @@ def shimmer(dur=0.9, **_):
     return s / 8 * np.minimum(t / 0.08, 1) * np.exp(-t * 4.5)
 
 
+def moneda(**_):
+    t = t_(0.7)
+    s = sum(a * np.sin(2 * np.pi * f * t) * np.exp(-t * d) for f, a, d in
+            [(2793, 1, 9), (4186, .6, 12), (5274, .35, 16), (7040, .2, 22)])
+    s2 = np.zeros_like(s)
+    k = int(0.06 * SR)
+    s2[k:] = s[:-k] * 0.55
+    return (s + s2) * np.minimum(t / 0.001, 1) * 0.6
+
+
 def riser(dur=0.6, **_):
     t = t_(dur)
     tone = np.sin(2 * np.pi * np.cumsum(180 * (4.5 ** (t / dur))) / SR)
@@ -100,7 +112,17 @@ def riser(dur=0.6, **_):
     return (tone * 0.6 + n * 0.25) * (t / dur) ** 2
 
 
-SYNTH = dict(pop=pop, click=click, tick=tick, thud=thud, whoosh=whoosh, chime=chime, shimmer=shimmer, riser=riser)
+SYNTH = dict(pop=pop, click=click, tick=tick, thud=thud, whoosh=whoosh, chime=chime, shimmer=shimmer, riser=riser,
+             moneda=moneda)
+
+
+def cargar(path, desde=0.0, hasta=None):
+    """Audio del usuario -> estéreo float a SR."""
+    args = ["ffmpeg", "-v", "error", "-ss", str(desde), "-i", path]
+    if hasta is not None:
+        args += ["-t", str(hasta - desde)]
+    raw = subprocess.run(args + ["-ac", "2", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout
+    return np.frombuffer(raw, dtype=np.float32).reshape(-1, 2).T
 
 
 def reverb(x, wet=0.18, length=0.5):
@@ -135,10 +157,17 @@ def main(proj):
                 if "freq" in sub and ev.get("subir_freq"):
                     sub["freq"] = sub["freq"] + k * ev["subir_freq"]
                 play({**sub, "frame": fr})
+        elif tipo == "muestra":
+            st = cargar(os.path.join(proj, ev["archivo"]), ev.get("desde_seg", 0.0), ev.get("hasta_seg"))
+            i = int(ev["frame"] / fps * SR)
+            if 0 <= i < N:
+                seg = st[:, : N - i] * gain
+                L[i:i + seg.shape[1]] += seg[0] * min(1.0, 1 - pan)
+                R[i:i + seg.shape[1]] += seg[1] * min(1.0, 1 + pan)
         elif tipo == "conteo":
             fr, f0 = float(ev["desde"]), float(ev["desde"])
             while fr < ev["hasta"]:
-                put(tick(ev.get("freq", 2100) + (fr - f0) * 6), fr, gain, rng.uniform(-.2, .2))
+                put(tick(ev.get("freq", 2100) + (fr - f0) * ev.get("pendiente", 6)), fr, gain, rng.uniform(-.2, .2))
                 fr += next((paso for lim, paso in ev["pasos"] if fr < lim), ev["pasos"][-1][1])
         elif tipo == "tipeo":
             for k in range(ev.get("teclas", 30)):

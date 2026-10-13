@@ -1,0 +1,58 @@
+{
+  "fps": 30,
+  "duracion_seg": 30,
+  "vo": "audio/vo.mp3",
+  "vo_gain": 0.9,
+  "sfx_gain": 0.6,
+  "eventos": [
+    { "tipo": "muestra", "archivo": "audio/cinematic_whoosh.wav", "frame": 0, "desde_seg": 0.62, "gain": 0.55 },
+    { "tipo": "muestra", "archivo": "audio/big_cinematic.mp3", "frame": 0, "desde_seg": 1.55, "gain": 0.55 },
+    { "tipo": "pop", "frame": 0, "gain": 0.3, "freq": 700 },
+    { "tipo": "moneda", "frame": 19, "gain": 0.5 },
+    { "tipo": "serie", "frames": [2, 8, 34, 47, 52, 62], "sub": { "tipo": "tick", "gain": 0.06, "freq": 2400 } },
+    { "tipo": "pop", "frame": 106, "gain": 0.3, "freq": 1100, "dur": 0.12, "decay": 45 },
+    { "tipo": "thud", "frame": 137, "gain": 0.45 },
+    { "tipo": "moneda", "frame": 138, "gain": 0.45, "pan": 0.2 },
+
+    { "tipo": "muestra", "archivo": "audio/cinematic_whoosh.wav", "frame": 122, "gain": 0.4, "pan": -0.3 },
+    { "tipo": "muestra", "archivo": "audio/cinematic_whoosh.wav", "frame": 324, "gain": 0.4, "pan": 0.3 },
+    { "tipo": "muestra", "archivo": "audio/cinematic_whoosh.wav", "frame": 486, "gain": 0.35, "pan": -0.3 },
+    { "tipo": "muestra", "archivo": "audio/cinematic_whoosh.wav", "frame": 679, "gain": 0.35, "pan": 0.3 },
+
+    { "tipo": "pop", "frame": 158, "gain": 0.35, "freq": 480, "dur": 0.2, "decay": 28, "pan": -0.3 },
+    { "tipo": "pop", "frame": 162, "gain": 0.35, "freq": 430, "dur": 0.2, "decay": 28, "pan": 0.3 },
+    { "tipo": "conteo", "desde": 158, "hasta": 169, "pasos": [[169, 2.2]], "gain": 0.12 },
+    { "tipo": "conteo", "desde": 200, "hasta": 214, "pasos": [[214, 2.0]], "gain": 0.12, "freq": 2300 },
+    { "tipo": "serie", "frames": [169, 192, 212, 229], "sub": { "tipo": "pop", "gain": 0.22, "freq": 1150, "dur": 0.12, "decay": 50 } },
+    { "tipo": "conteo", "desde": 247, "hasta": 270, "pasos": [[270, 2.5]], "gain": 0.11, "freq": 1900, "pendiente": -14 },
+    { "tipo": "serie", "frames": [248, 250, 252, 254, 256], "subir_freq": 90, "sub": { "tipo": "pop", "gain": 0.16, "freq": 900, "dur": 0.1, "decay": 55 } },
+    { "tipo": "serie", "frames": [270, 272, 274], "subir_freq": -120, "sub": { "tipo": "pop", "gain": 0.16, "freq": 600, "dur": 0.14, "decay": 40 } },
+    { "tipo": "conteo", "desde": 321, "hasta": 337, "pasos": [[337, 2.0]], "gain": 0.11, "freq": 1700, "pendiente": -18 },
+    { "tipo": "thud", "frame": 337, "gain": 0.55 },
+
+    { "tipo": "pop", "frame": 360, "gain": 0.35, "freq": 380, "dur": 0.22, "decay": 24 },
+    { "tipo": "tipeo", "desde": 366, "teclas": 30, "cada": 1.2, "gain": 0.16 },
+    { "tipo": "serie", "frames": [416, 445, 464], "sub": { "tipo": "pop", "gain": 0.25, "freq": 820, "dur": 0.14, "decay": 40 } },
+    { "tipo": "serie", "frames": [432, 462, 486], "sub": { "tipo": "tick", "gain": 0.22, "freq": 2700 } },
+    { "tipo": "pop", "frame": 470, "gain": 0.28, "freq": 700, "dur": 0.16, "decay": 34 },
+    { "tipo": "whoosh", "frame": 472, "gain": 0.1, "pan": 0.6, "dur": 0.3 },
+    { "tipo": "muestra", "archivo": "audio/camera.wav", "frame": 487, "gain": 1.6 },
+    { "tipo": "shimmer", "frame": 512, "gain": 0.2, "dur": 0.8 },
+
+    { "tipo": "pop", "frame": 522, "gain": 0.3, "freq": 420, "dur": 0.2, "decay": 26 },
+    { "tipo": "pop", "frame": 558, "gain": 0.45, "freq": 520, "dur": 0.22, "decay": 24 },
+    { "tipo": "shimmer", "frame": 562, "gain": 0.2, "dur": 0.9 },
+    { "tipo": "pop", "frame": 613, "gain": 0.22, "freq": 1250, "dur": 0.12, "decay": 45 },
+    { "tipo": "riser", "frame": 630, "gain": 0.22, "dur": 0.6 },
+    { "tipo": "conteo", "desde": 648, "hasta": 698, "pasos": [[670, 2.0], [698, 3.0]], "gain": 0.1, "freq": 1600, "pendiente": 14 },
+    { "tipo": "shimmer", "frame": 668, "gain": 0.3, "pan": -0.2, "dur": 1.2 },
+
+    { "tipo": "pop", "frame": 718, "gain": 0.3, "freq": 560, "dur": 0.18, "decay": 30, "pan": 0.4 },
+    { "tipo": "pop", "frame": 787, "gain": 0.5, "freq": 500, "dur": 0.2, "decay": 26 },
+    { "tipo": "pop", "frame": 809, "gain": 0.5, "freq": 450, "dur": 0.22, "decay": 24 },
+    { "tipo": "chime", "frame": 811, "gain": 0.42 },
+    { "tipo": "tick", "frame": 815, "gain": 0.2, "freq": 2800 },
+    { "tipo": "whoosh", "frame": 838, "gain": 0.18, "pan": 0.6, "dur": 0.35 },
+    { "tipo": "shimmer", "frame": 876, "gain": 0.14, "dur": 1.0 }
+  ]
+}

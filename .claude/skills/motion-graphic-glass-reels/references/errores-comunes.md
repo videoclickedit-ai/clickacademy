@@ -35,3 +35,10 @@ Todos aparecieron en producción. Revisá esta lista en cada pasada de stills.
 
 11. **Elementos de una escena que se ven en otra.** Cada bloque de `renderFrame` va con su rango
     de frames (`if (f >= a - 4 && f < b + 4)`) y cada escena se oculta fuera de su ventana.
+
+12. **SFX del usuario desfasados.** Un whoosh de 1,3 s pega en 1,07 s y un "big cinematic" de 8 s
+    pega en 2,15 s. Si los ponés en el frame del evento, suenan tarde. Medilos con `picos_audio.py`
+    y alineá el pico.
+
+13. **Datos de apoyo (SRT, CSV) que no son subtítulos.** Un SRT de "$0 a $221", uno por segundo,
+    es la escala de un contador, no un timing para respetar. Usá sus valores y animalos al ritmo de la voz.

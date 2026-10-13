@@ -1,0 +1,684 @@
+<!doctype html>
+<!--
+  Reel "Estás perdiendo plata" · 1080x1920 · 30 fps · 30 s (900 f)
+  Hecho con la skill motion-graphic-glass-reels a partir de su plantilla.
+  Cortes: s1 0-156 · s2 156-358 · s3 358-520 · s4 520-713 · s5 713-900
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel Plata</title>
+<style>
+:root {
+  --cobalto: #1240AB; --electrico: #2A5BDB; --ice: #A4C6FF; --cielo: #6E9BEA;
+  --niebla: #E4ECFB; --navy: #0B2E73; --magenta: #B31240; --rojo: #E0262B;
+  --rosa: #F6C9D3; --violeta: #6B3FA0; --caption: #1A1F2E;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--niebla); }
+body { font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased; color: var(--caption); }
+#stage { position: absolute; inset: 0; overflow: hidden; }
+#bg { position: absolute; inset: 0; }
+#grain {
+  position: absolute; inset: -200px; opacity: .07; mix-blend-mode: overlay; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.scene { position: absolute; inset: 0; transform-origin: 50% 45%; opacity: 0; }
+.abs { position: absolute; }
+.cx { left: 0; right: 0; text-align: center; }
+
+/* ---------- Tipografía ---------- */
+.cap { font-family: "Inter"; font-weight: 600; font-size: 56px; line-height: 68px; letter-spacing: -.01em; color: var(--caption); }
+.w { display: inline-block; opacity: 0; white-space: pre; }
+.hl { color: var(--cobalto); }
+.hlr { color: var(--magenta); }
+.impact { font-family: "Inter Display"; font-weight: 900; letter-spacing: -.045em; line-height: .9; color: var(--navy); }
+.italic { font-family: "Inter Display"; font-style: italic; font-weight: 700; color: var(--cobalto); letter-spacing: -.02em; }
+.glassglyph {
+  font-family: "Inter Display"; font-weight: 900; line-height: 1; color: transparent;
+  background: linear-gradient(125deg, #FFFFFF 0%, #EEF4FF 16%, #FFFFFF 22%, #A9C6FF 38%, #4F7FE6 62%, #1240AB 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-stroke: 5px rgba(255,255,255,.92);
+  filter: drop-shadow(0 30px 50px rgba(11,46,115,.35)) drop-shadow(0 0 26px rgba(164,198,255,.85));
+}
+
+/* ---------- Vidrio ---------- */
+.glass {
+  position: absolute; border-radius: 40px; overflow: hidden;
+  background: linear-gradient(135deg, var(--g1, rgba(234,241,255,.45)), var(--g2, rgba(42,91,219,.80)));
+  box-shadow: 0 24px 60px var(--sh, rgba(11,46,115,.22)), inset 0 0 18px rgba(255,255,255,.35);
+  backdrop-filter: blur(24px) saturate(140%);
+}
+.glass::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.15));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.glass.ice { --g1: rgba(255,255,255,.38); --g2: rgba(255,255,255,.14); }
+.glass.red { --g1: rgba(255,236,240,.55); --g2: rgba(179,18,64,.80); --sh: rgba(115,11,40,.25); }
+.glass.sm { border-radius: 28px; }
+.shine { position: absolute; top: -30%; bottom: -30%; width: 160px; transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); }
+
+.bubble {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0%, rgba(255,255,255,.4) 16%, rgba(164,198,255,.28) 45%, var(--bc, rgba(42,91,219,.55)) 100%);
+  box-shadow: inset -8px -12px 30px var(--bi, rgba(18,64,171,.35)), inset 6px 8px 18px rgba(255,255,255,.7), 0 20px 50px rgba(11,46,115,.18);
+}
+.bubble.red { --bc: rgba(179,18,64,.55); --bi: rgba(140,10,40,.35); }
+
+/* ---------- Personaje ---------- */
+.char { position: absolute; width: 480px; height: 820px; transform-origin: 50% 40%;
+  --core: #2A5BDB; --mid: rgba(110,155,234,.92); --glow: rgba(42,91,219,.5); }
+.char.red { --core: #B31240; --mid: rgba(232,120,150,.92); --glow: rgba(224,38,43,.55); }
+.char .body {
+  position: absolute; left: 20px; top: 250px; width: 440px; height: 560px; border-radius: 220px 220px 90px 90px;
+  background: linear-gradient(180deg, rgba(255,255,255,.88) 0%, rgba(228,238,255,.58) 28%, rgba(164,198,255,.28) 65%, rgba(164,198,255,0) 100%);
+  box-shadow: inset 0 3px 0 rgba(255,255,255,.95), inset 0 30px 60px rgba(255,255,255,.55), inset 0 -40px 80px rgba(42,91,219,.12);
+  -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 100%);
+  backdrop-filter: blur(14px);
+}
+.char .head {
+  position: absolute; left: 130px; top: 0; width: 220px; height: 220px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 55%, var(--core) 0%, var(--core) 16%, var(--mid) 46%, rgba(222,233,255,.94) 78%, #fff 100%);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.7), 0 0 60px var(--glow), 0 26px 50px rgba(11,46,115,.22), inset -10px -14px 30px rgba(18,64,171,.22);
+}
+.char .spec { position: absolute; left: 36px; top: 24px; width: 74px; height: 40px; border-radius: 50%; transform: rotate(-30deg);
+  background: radial-gradient(closest-side, rgba(255,255,255,.95), rgba(255,255,255,0)); }
+.char .eye { position: absolute; top: 90px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,.9); }
+.char .eye.l { left: 78px; } .char .eye.r { left: 124px; }
+.char .mouth { position: absolute; left: 87px; top: 122px; width: 46px; height: 22px; border: 5px solid #fff; border-top: none; border-radius: 0 0 30px 30px; }
+.char.sad .mouth { top: 136px; border: 5px solid #fff; border-bottom: none; border-radius: 30px 30px 0 0; height: 16px; }
+.char .drop { position: absolute; left: 186px; top: 40px; width: 22px; height: 30px; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: linear-gradient(180deg, #fff, var(--ice)); opacity: 0; }
+
+/* ---------- UI ---------- */
+.ui { font-family: "Inter"; color: #fff; }
+.sec { display: flex; align-items: center; gap: 14px; font: 700 32px "Inter"; color: #fff; }
+.lbl { font: 600 30px "Inter"; color: rgba(255,255,255,.9); }
+.big { font: 900 124px "Inter Display"; letter-spacing: -.045em; line-height: 1; color: #fff; font-variant-numeric: tabular-nums; }
+.row { position: absolute; left: 0; right: 0; height: 150px; border-radius: 28px; background: rgba(255,255,255,.14);
+  border: 2px solid rgba(255,255,255,.28); padding: 24px 28px; display: flex; align-items: center; gap: 24px; overflow: hidden; }
+.row .ic { width: 78px; height: 78px; border-radius: 22px; background: rgba(255,255,255,.22); display: grid; place-items: center; flex: none; }
+.row .tt { font: 800 38px "Inter Display"; letter-spacing: -.01em; }
+.row .st { font: 500 24px "Inter"; opacity: .82; margin-top: 4px; }
+.row .stat { margin-left: auto; width: 64px; height: 64px; position: relative; flex: none; }
+.row .bar { position: absolute; left: 0; bottom: 0; height: 6px; width: 0; background: #fff; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 999px; background: #fff; color: var(--cobalto); font: 800 32px "Inter"; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"></div>
+
+  <!-- ================= ESCENA 1 · HOOK ================= -->
+  <section class="scene" id="s1">
+    <div class="bubble" id="s1b1" style="left:70px;top:1100px;width:120px;height:120px"></div>
+    <div class="bubble" id="s1b2" style="left:900px;top:960px;width:84px;height:84px"></div>
+    <div class="bubble" id="s1b4" style="left:830px;top:1560px;width:300px;height:300px;filter:blur(10px)"></div>
+    <div class="abs" id="s1glow" style="left:210px;top:780px;width:660px;height:660px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.9),rgba(164,198,255,.4) 55%,rgba(164,198,255,0))"></div>
+    <div class="abs" id="s1shadow" style="left:330px;top:1440px;width:420px;height:70px;border-radius:50%;background:radial-gradient(closest-side,rgba(11,46,115,.38),rgba(11,46,115,0))"></div>
+    <div class="abs cx" id="s1dollar" style="top:770px;transform-origin:50% 55%"><span class="glassglyph" style="font-size:640px">$</span></div>
+    <div id="s1coins"></div>
+    <div class="bubble" id="s1b3" style="left:-170px;top:1520px;width:460px;height:460px;filter:blur(14px)"></div>
+    <div class="abs cx cap" id="s1cap" style="top:236px;font-size:54px"></div>
+    <div class="abs cx impact" id="s1t1" style="top:326px;font-size:112px">Estás perdiendo</div>
+    <div class="abs cx" id="s1blk" style="top:456px">
+      <span id="s1blkin" style="display:inline-block;position:relative;padding:22px 50px 10px;border-radius:36px;background:linear-gradient(135deg,#2A5BDB,#1240AB);box-shadow:0 0 0 3px rgba(255,255,255,.45) inset,0 26px 60px rgba(11,46,115,.35),0 0 50px rgba(164,198,255,.7)">
+        <span class="impact" style="font-size:236px;color:#fff;display:block;line-height:.86;letter-spacing:-.03em">PLATA</span>
+      </span>
+    </div>
+    <div class="abs" id="s1tag" style="left:600px;top:690px;padding:10px 26px;border-radius:999px;background:#fff;box-shadow:0 12px 30px rgba(11,46,115,.25)">
+      <span class="italic" style="font-size:54px">muchísima</span>
+    </div>
+  </section>
+
+  <!-- ================= ESCENA 2 · PROBLEMA ================= -->
+  <section class="scene" id="s2">
+    <div class="abs cx cap" id="s2cap" style="top:250px"></div>
+
+    <div class="glass red" id="s2hrs" style="left:60px;top:420px;width:465px;height:420px">
+      <div class="ui" style="position:absolute;inset:0;padding:38px 40px">
+        <div class="lbl">Horas por video</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-top:10px"><span class="big" id="s2hv">+0</span><span style="font:800 50px 'Inter Display'">hs</span></div>
+        <svg viewBox="0 0 24 24" width="62" height="62" style="position:absolute;right:34px;top:34px;background:rgba(255,255,255,.22);border-radius:18px;padding:10px" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        <div id="s2bars" style="position:absolute;left:40px;right:40px;bottom:36px;height:110px;display:flex;align-items:flex-end;gap:14px"></div>
+      </div>
+    </div>
+    <div class="glass red" id="s2pay" style="left:555px;top:420px;width:465px;height:420px">
+      <div class="ui" style="position:absolute;inset:0;padding:38px 40px">
+        <div class="lbl">Cobrás por video</div>
+        <div style="margin-top:10px"><span class="big" id="s2pv">$80</span></div>
+        <svg viewBox="0 0 24 24" width="62" height="62" style="position:absolute;right:34px;top:34px;background:rgba(255,255,255,.22);border-radius:18px;padding:10px" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        <svg viewBox="0 0 385 110" width="385" height="110" style="position:absolute;left:40px;bottom:36px;overflow:visible">
+          <path id="s2pl" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle id="s2pd" r="11" fill="#fff"/>
+        </svg>
+      </div>
+    </div>
+    <div id="s2chips"></div>
+
+    <div class="abs cx" id="s2cli" style="top:900px">
+      <div style="font:700 30px 'Inter';letter-spacing:.16em;color:rgba(26,31,46,.62)">CLIENTES</div>
+      <div id="s2av" style="display:flex;justify-content:center;gap:26px;margin-top:22px"></div>
+    </div>
+
+    <div class="char red sad" id="s2char" style="left:300px;top:1210px">
+      <div class="body"></div>
+      <div class="head"><div class="spec"></div><div class="eye l"></div><div class="eye r"></div><div class="mouth"></div><div class="drop"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= ESCENA 3 · SOLUCIÓN ================= -->
+  <section class="scene" id="s3">
+    <div class="bubble" id="s3b1" style="left:-60px;top:1500px;width:260px;height:260px;filter:blur(8px)"></div>
+    <div class="bubble" id="s3b2" style="left:930px;top:360px;width:120px;height:120px;filter:blur(3px)"></div>
+    <div class="abs cx cap" id="s3cap" style="top:236px"></div>
+    <div class="glass" id="s3dash" style="left:90px;top:430px;width:900px;height:1000px;padding:48px">
+      <div class="ui" style="position:relative;height:100%">
+        <div style="display:flex;align-items:center;gap:16px;height:52px">
+          <svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z" fill="#fff"/></svg>
+          <span style="font:800 40px 'Inter Display'">Claude</span>
+          <span id="s3status" style="margin-left:auto;display:flex;align-items:center;gap:12px;padding:10px 22px;border-radius:999px;background:rgba(255,255,255,.18);font:700 24px 'Inter'"><i id="s3dot" style="width:14px;height:14px;border-radius:50%;background:#A4C6FF;display:inline-block"></i><span id="s3stxt">Procesando</span></span>
+        </div>
+        <div id="s3prompt" style="position:absolute;left:0;right:0;top:76px;height:88px;border-radius:44px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);display:flex;align-items:center;padding:0 34px;font:500 31px 'Inter'">
+          <span id="s3ptext"></span><i id="s3caret" style="display:inline-block;width:3px;height:40px;background:#fff;margin-left:4px"></i>
+        </div>
+        <div class="sec abs" id="s3title" style="left:0;top:200px">Flujo de trabajo</div>
+        <div id="s3rows"></div>
+
+        <div id="s3btn" style="position:absolute;left:182px;top:800px;width:440px;height:104px;border-radius:52px;background:#fff;box-shadow:0 18px 40px rgba(11,46,115,.3);overflow:hidden">
+          <i id="s3fill" style="position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#A4C6FF,#DCE8FF)"></i>
+          <div id="s3ripple" style="position:absolute;left:300px;top:52px;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:rgba(42,91,219,.25);opacity:0"></div>
+          <div style="position:relative;height:100%;display:flex;align-items:center;justify-content:center;gap:14px;font:800 42px 'Inter Display';color:var(--cobalto);letter-spacing:-.01em">
+            <svg viewBox="0 0 24 24" width="34" height="34"><path d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z" fill="#1240AB"/></svg><span id="s3ltxt">Generar</span>
+          </div>
+        </div>
+      </div>
+      <div class="shine" id="s3shine" style="left:-300px"></div>
+    </div>
+    <svg class="abs" id="s3cursor" viewBox="0 0 60 90" width="96" height="144" style="left:900px;top:1700px;overflow:visible;filter:drop-shadow(0 14px 22px rgba(11,46,115,.35))">
+      <defs><linearGradient id="gcur" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#9DBDF8"/></linearGradient></defs>
+      <path d="M2 2 L2 72 L20 56 L32 84 L45 78 L33 51 L56 51 Z" fill="url(#gcur)" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+    </svg>
+  </section>
+
+  <!-- ================= ESCENA 4 · LECCIÓN ================= -->
+  <section class="scene" id="s4">
+    <div class="bubble" id="s4b1" style="left:860px;top:1400px;width:240px;height:240px;filter:blur(6px)"></div>
+    <div class="bubble" id="s4b2" style="left:40px;top:640px;width:90px;height:90px"></div>
+    <div class="abs cx cap" id="s4cap" style="top:236px"></div>
+    <div class="abs cx" id="s4imp" style="top:400px;display:flex;justify-content:center;align-items:center;gap:26px">
+      <span class="impact" id="s4x3" style="font-size:230px;color:transparent;-webkit-background-clip:text;background-clip:text;background-image:linear-gradient(100deg,#1240AB 0%,#2A5BDB 38%,#FFFFFF 50%,#2A5BDB 62%,#1240AB 100%);background-size:300% 100%;padding-right:8px">x3</span>
+      <span id="s4fast" style="text-align:left"><span class="italic" style="display:block;font-size:76px;line-height:1">más</span><span class="italic" style="display:block;font-size:76px;line-height:1">rápido</span></span>
+    </div>
+    <div class="glass" id="s4card" style="left:110px;top:720px;width:860px;height:640px">
+      <div class="ui" style="position:absolute;left:52px;top:44px">
+        <div style="font:600 30px 'Inter';opacity:.88">Tu hora vale</div>
+        <div style="display:flex;align-items:baseline;gap:12px"><span id="s4v" style="font:900 124px 'Inter Display';letter-spacing:-.04em;line-height:1.05;font-variant-numeric:tabular-nums">$0</span><span style="font:700 40px 'Inter';opacity:.85">/ hora</span></div>
+      </div>
+      <div id="s4badge" class="abs pill" style="right:44px;top:50px;opacity:0;font-size:28px;padding:12px 22px">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#1240AB" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Más calidad
+      </div>
+      <svg id="s4chart" class="abs" viewBox="0 0 760 360" width="760" height="360" style="left:50px;top:250px;overflow:visible">
+        <defs>
+          <linearGradient id="garea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+          <clipPath id="creveal"><rect id="s4clip" x="-20" y="-400" width="0" height="800"/></clipPath>
+          <filter id="fglow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <g stroke="rgba(255,255,255,.18)" stroke-width="2"><line x1="0" y1="90" x2="760" y2="90"/><line x1="0" y1="180" x2="760" y2="180"/><line x1="0" y1="270" x2="760" y2="270"/></g>
+        <g clip-path="url(#creveal)">
+          <path id="s4area" fill="url(#garea)"/>
+          <path id="s4line" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#fglow)"/>
+        </g>
+        <circle id="s4halo" r="34" fill="rgba(255,255,255,.25)"/>
+        <circle id="s4dot" r="13" fill="#fff" filter="url(#fglow)"/>
+        <g id="s4sparks"></g>
+      </svg>
+      <div class="shine" id="s4shine" style="left:-300px"></div>
+    </div>
+  </section>
+
+  <!-- ================= ESCENA 5 · CTA ================= -->
+  <section class="scene" id="s5">
+    <div class="bubble" id="s5b1" style="left:60px;top:1240px;width:110px;height:110px"></div>
+    <div class="bubble" id="s5b2" style="left:-140px;top:1560px;width:380px;height:380px;filter:blur(12px)"></div>
+    <div class="char" id="s5char" style="left:600px;top:1130px">
+      <div class="body"></div>
+      <div class="head"><div class="spec"></div><div class="eye l"></div><div class="eye r"></div><div class="mouth"></div></div>
+    </div>
+    <div class="abs cap" id="s5cap" style="left:80px;width:920px;top:290px;font-size:54px;line-height:66px"></div>
+    <div class="abs impact" id="s5com" style="left:72px;top:520px;font-size:156px;transform-origin:0 50%">Comentá</div>
+    <div class="abs" id="s5blk" style="left:80px;top:700px;transform-origin:20% 50%">
+      <div style="position:relative;padding:20px 40px 14px;border-radius:30px;background:linear-gradient(135deg,#2A5BDB,#1240AB);box-shadow:0 0 0 3px rgba(255,255,255,.45) inset,0 22px 50px rgba(11,46,115,.35),0 0 var(--gl,40px) rgba(164,198,255,.75)">
+        <span class="impact" style="font-size:156px;color:#fff;letter-spacing:-.035em;display:block">CLAUDE</span>
+      </div>
+    </div>
+    <div class="abs italic" id="s5sub" style="left:80px;top:918px;font-size:60px;width:920px"></div>
+    <div class="abs" id="s5dm" style="left:812px;top:466px;width:220px;height:220px">
+      <div class="glass" style="inset:0;border-radius:64px;--g1:rgba(255,255,255,.55);--g2:rgba(42,91,219,.85)">
+        <svg id="s5plane" viewBox="0 0 24 24" width="120" height="120" style="position:absolute;left:46px;top:50px;overflow:visible" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7Z" fill="rgba(255,255,255,.25)"/>
+        </svg>
+      </div>
+      <div id="s5badge" style="position:absolute;right:-16px;top:-18px;width:66px;height:66px;border-radius:50%;background:#E0262B;border:4px solid #fff;color:#fff;font:800 32px 'Inter';display:grid;place-items:center;box-shadow:0 8px 20px rgba(179,18,64,.45)">1</div>
+    </div>
+  </section>
+
+  <div id="grain"></div>
+</div>
+
+<script>
+// ============ utilidades ============
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, t) => a + (b - a) * t;
+const E = {
+  lin: t => t,
+  out: t => 1 - Math.pow(1 - t, 3),
+  inOut: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  expo: t => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t),
+};
+const P = (f, a, b, e = E.out) => e(clamp((f - a) / (b - a)));
+const spring = (fr, k = 9, w = 15) => fr <= 0 ? 0 : 1 - Math.exp(-k * fr / 30) * Math.cos(w * fr / 30);
+const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, t) => { const A = hex(a), B = hex(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], t))).join(',')})`; };
+const set = (el, s) => { for (const k in s) el.style[k] = s[k]; };
+const popS = (f, a, k = 9, w = 15, from = .4) => f < a ? from : lerp(from, 1, spring(f - a, k, w));
+
+// ============ captions palabra por palabra ============
+function buildCaption(el, words) {
+  el.innerHTML = '';
+  return words.map(([txt, fr, cls]) => {
+    if (txt === '\n') { el.appendChild(document.createElement('br')); return null; }
+    const s = document.createElement('span');
+    s.className = 'w' + (cls ? ' ' + cls : '');
+    s.textContent = txt;
+    el.appendChild(s);
+    el.appendChild(document.createTextNode(' '));
+    return { s, fr };
+  }).filter(Boolean);
+}
+function animWords(list, f) {
+  for (const { s, fr } of list) {
+    const t = P(f, fr - 1, fr + 5);
+    const sp = spring(f - fr + 1, 11, 16);
+    s.style.opacity = t;
+    s.style.transform = `translateY(${(1 - t) * 26}px) scale(${f < fr - 1 ? .9 : lerp(.9, 1, Math.min(sp, 1.06))})`;
+  }
+}
+function phraseGroup(el, phrases) {
+  const items = phrases.map(p => {
+    const wrap = document.createElement('div');
+    wrap.style.position = 'absolute'; wrap.style.left = 0; wrap.style.right = 0;
+    el.appendChild(wrap);
+    return { ...p, wrap, words: buildCaption(wrap, p.words) };
+  });
+  return f => items.forEach(it => {
+    const vis = f >= it.a - 2 && f < it.b;
+    it.wrap.style.display = vis ? 'block' : 'none';
+    if (!vis) return;
+    const out = P(f, it.b - 4, it.b);
+    it.wrap.style.opacity = 1 - out;
+    it.wrap.style.transform = `translateY(${-out * 20}px)`;
+    animWords(it.words, f);
+  });
+}
+
+// ============ escenas ============
+const SCENES = [
+  { id: 's1', a: 0, b: 156 },
+  { id: 's2', a: 156, b: 358 },
+  { id: 's3', a: 358, b: 520 },
+  { id: 's4', a: 520, b: 713 },
+  { id: 's5', a: 713, b: 900 },
+];
+const TOTAL = 900;
+
+// ---- Escena 1 · Hook
+const s1cap = buildCaption($('s1cap'), [['Si', 2], ['editás', 8], ['videos', 34], ['sin', 47], ['usar', 52], ['IA,', 62, 'hl']]);
+const COINS = Array.from({ length: 9 }, (_, i) => {
+  const d = document.createElement('div');
+  d.className = 'bubble'; d.style.width = d.style.height = (34 + (i % 3) * 14) + 'px';
+  d.style.left = '520px'; d.style.top = '1180px';
+  $('s1coins').appendChild(d);
+  return { el: d, ang: -Math.PI / 2 + (i - 4) * .32, sp: 26 + (i % 4) * 7 };
+});
+
+// ---- Escena 2 · Problema
+const s2caps = phraseGroup($('s2cap'), [
+  { a: 156, b: 195, words: [['Perdés', 160], ['días', 169, 'hlr'], ['enteros', 179, 'hlr']] },
+  { a: 195, b: 244, words: [['haciendo', 197], ['tareas', 212], ['manuales,', 221, 'hlr']] },
+  { a: 244, b: 300, words: [['podés', 247], ['agarrar', 257], ['pocos', 270, 'hlr'], ['clientes', 281]] },
+  { a: 300, b: 365, words: [['y', 303], ['terminás', 306], ['cobrando', 321], ['poco.', 337, 'hlr']] },
+]);
+const BARS = [.18, .3, .42, .58, .76, 1];
+BARS.forEach(() => { const b = document.createElement('i'); set(b, { flex: '1', height: '0%', borderRadius: '10px 10px 4px 4px', background: 'rgba(255,255,255,.85)', display: 'block' }); $('s2bars').appendChild(b); });
+const HCHIPS = [
+  { t: '+5 hs', x: 70, fr: 169 }, { t: '+2 hs', x: 860, fr: 192 }, { t: '+12 hs', x: 90, fr: 212 }, { t: '+3 hs', x: 840, fr: 229 },
+];
+HCHIPS.forEach((c, i) => {
+  const d = document.createElement('div');
+  d.className = 'glass red sm'; d.id = 's2hc' + i;
+  set(d, { left: c.x + 'px', top: '1060px', padding: '14px 26px', borderRadius: '999px' });
+  d.innerHTML = `<span class="ui" style="font:800 34px 'Inter Display';white-space:nowrap;position:relative">${c.t}</span>`;
+  $('s2chips').appendChild(d);
+});
+for (let i = 0; i < 5; i++) {
+  const a = document.createElement('div');
+  a.className = 'bubble red'; a.id = 's2a' + i;
+  set(a, { position: 'relative', width: '112px', height: '112px', display: 'grid', placeItems: 'center' });
+  a.innerHTML = '<svg viewBox="0 0 24 24" width="54" height="54" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>';
+  $('s2av').appendChild(a);
+}
+
+// ---- Escena 3 · Solución
+const s3caps = phraseGroup($('s3cap'), [
+  { a: 358, b: 390, words: [['Yo', 362], ['uso', 368], ['a', 375], ['Claude', 380, 'hl']] },
+  { a: 390, b: 440, words: [['para', 392], ['armar', 402], ['la', 414], ['estructura,', 418, 'hl']] },
+  { a: 440, b: 488, words: [['los', 442], ['guiones', 447, 'hl'], ['y', 458], ['las', 462], ['animaciones', 466, 'hl']] },
+  { a: 488, b: 530, words: [['en', 490], ['minutos.', 495, 'hl']] },
+]);
+const PROMPT = 'Armá estructura, guiones y animaciones';
+const ICO = {
+  est: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  gui: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+  ani: '<rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/>',
+};
+const ROWS3 = [
+  { k: 'est', t: 'Estructura', s: 'Hook · Problema · Solución · CTA', a: 416, d: 432, top: 262 },
+  { k: 'gui', t: 'Guiones', s: '5 escenas listas para grabar', a: 445, d: 462, top: 424 },
+  { k: 'ani', t: 'Animaciones', s: 'Vidrio 3D · 30 fps · con tu voz', a: 464, d: 486, top: 586 },
+];
+ROWS3.forEach((r, i) => {
+  const d = document.createElement('div');
+  d.className = 'row'; d.id = 's3r' + i; d.style.top = r.top + 'px';
+  d.innerHTML = `<span class="ic"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[r.k]}</svg></span>
+    <span><div class="tt">${r.t}</div><div class="st">${r.s}</div></span>
+    <span class="stat"><svg class="spin" viewBox="0 0 64 64" width="64" height="64" style="position:absolute;inset:0"><circle cx="32" cy="32" r="24" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="6"/><path d="M32 8a24 24 0 0 1 24 24" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg>
+    <svg class="ok" viewBox="0 0 64 64" width="64" height="64" style="position:absolute;inset:0"><circle cx="32" cy="32" r="30" fill="#fff"/><path d="M19 33l9 9 17-18" fill="none" stroke="#1240AB" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <i class="bar"></i>`;
+  $('s3rows').appendChild(d);
+});
+
+// ---- Escena 4 · Lección
+const s4caps = phraseGroup($('s4cap'), [
+  { a: 520, b: 592, words: [['Así', 524], ['entregás', 538], ['el', 551], ['triple', 560, 'hl'], ['de', 568], ['rápido,', 574, 'hl']] },
+  { a: 592, b: 633, words: [['mejorás', 594], ['la', 610], ['calidad', 615, 'hl']] },
+  { a: 633, b: 720, words: [['y', 635], ['podés', 639], ['cobrar', 648], ['mucho', 656], ['más', 670, 'hl'], ['\n'], ['por', 686], ['tu', 692], ['tiempo.', 696, 'hl']] },
+]);
+const BASE = [.08, .11, .10, .14, .13, .17, .16, .20, .19, .23, .22, .26, .25, .28];
+const BOOST = BASE.map((v, i) => Math.pow(i / (BASE.length - 1), 3.2) * .72);
+function curve(pts) {
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+for (let i = 0; i < 7; i++) {
+  const s = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  s.setAttribute('d', 'M0-10C.6-.6 .6-.6 10 0C.6 .6 .6 .6 0 10C-.6 .6-.6 .6-10 0C-.6-.6-.6-.6 0-10Z');
+  s.setAttribute('fill', '#fff'); s.id = 's4sp' + i;
+  $('s4sparks').appendChild(s);
+}
+
+// ---- Escena 5 · CTA
+const s5cap = phraseGroup($('s5cap'), [
+  { a: 713, b: 990, words: [['Si', 717], ['querés', 722], ['aprender', 729], ['a', 741], ['usar', 744], ['\n'], ['Claude', 753, 'hl'], ['en', 761], ['tu', 764], ['edición,', 766]] },
+]);
+const s5sub = buildCaption($('s5sub'), [['y', 830], ['te', 833], ['mando', 838], ['el', 848], ['paso', 853], ['a', 859], ['paso', 864]]);
+
+// ============ personaje / burbujas ============
+function animChar(id, f, { born = 0, blink = [], shake = 0, bob = 1 } = {}) {
+  const el = $(id);
+  const head = el.querySelector('.head'), body = el.querySelector('.body');
+  const sp = spring(f - born, 8, 13);
+  const t = f / 30;
+  const by = Math.sin(t * 2.4) * 10 * bob;
+  const sx = shake ? (Math.sin(f * 2.7) * shake + Math.sin(f * 4.1) * shake * .6) : 0;
+  set(el, { transform: `translate(${sx}px, ${lerp(120, 0, Math.min(sp, 1))}px) scale(${lerp(.6, 1, sp)})`, opacity: P(f, born, born + 6) });
+  head.style.transform = `translateY(${by - 6}px) rotate(${Math.sin(t * 1.7) * 4 * bob + sx * .4}deg)`;
+  body.style.transform = `translateY(${by * .4}px)`;
+  const bl = blink.some(b => f >= b && f < b + 4);
+  el.querySelectorAll('.eye').forEach(e => e.style.transform = `scaleY(${bl ? .15 : 1})`);
+}
+function animBubble(id, f, ph, amp = 18) {
+  const t = f / 30 + ph;
+  $(id).style.transform = `translate(${Math.sin(t * .9) * amp}px, ${Math.cos(t * 1.1) * amp}px)`;
+}
+
+// ============ fondo ============
+const BG = {
+  azul: { a: '#E4ECFB', b: '#A4C6FF', c: '#8FADEF', pool: '#2A5BDB', pool2: '#6E9BEA' },
+  violeta: { a: '#F1E9F7', b: '#CDB0E2', c: '#9E73C9', pool: '#6B3FA0', pool2: '#9A6CC4' },
+  rojo: { a: '#FFFFFF', b: '#F6C9D3', c: '#E0262B', pool: '#B31240', pool2: '#E0262B' },
+};
+function bgAt(f) {
+  const m = f < 257 ? P(f, 150, 162, E.inOut) : 1 - P(f, 352, 364, E.inOut);
+  const [A, B, t] = m < .5 ? [BG.azul, BG.violeta, m * 2] : [BG.violeta, BG.rojo, (m - .5) * 2];
+  const c = k => mix(A[k], B[k], t);
+  const tt = f / 30;
+  const hx = 84 + Math.sin(tt * .5) * 4, hy = 6 + Math.cos(tt * .4) * 3;
+  const px = 6 + Math.sin(tt * .35) * 6, py = 60 + Math.cos(tt * .3) * 5;
+  const p1 = hex(A.pool).map((v, i) => Math.round(lerp(v, hex(B.pool)[i], t)));
+  const p2 = hex(A.pool2).map((v, i) => Math.round(lerp(v, hex(B.pool2)[i], t)));
+  $('bg').style.background = [
+    `radial-gradient(62% 36% at ${hx}% ${hy}%, rgba(255,255,255,1) 0%, rgba(255,255,255,.6) 40%, rgba(255,255,255,0) 100%)`,
+    `radial-gradient(58% 34% at ${px}% ${py}%, rgba(${p1},.95) 0%, rgba(${p1},.45) 45%, rgba(${p1},0) 100%)`,
+    `radial-gradient(80% 26% at 72% 104%, rgba(${p2},.9) 0%, rgba(${p2},0) 100%)`,
+    `linear-gradient(180deg, ${c('a')} 0%, ${c('b')} 62%, ${c('c')} 100%)`,
+  ].join(',');
+}
+
+// ============ render de un frame ============
+window.renderFrame = function (f) {
+  bgAt(f);
+  $('grain').style.transform = `translate(${(f * 37) % 160 - 80}px, ${(f * 53) % 160 - 80}px)`;
+
+  SCENES.forEach((s, i) => {
+    const el = $(s.id);
+    const vis = f >= s.a - 2 && f < s.b + 3;
+    el.style.display = vis ? 'block' : 'none';
+    if (!vis) return;
+    let o = 1, sc = 1 + (f - s.a) / (s.b - s.a) * .03, bl = 0;
+    if (i > 0) { const t = P(f, s.a - 2, s.a + 8); o *= t; sc *= lerp(.9, 1, t); bl += (1 - t) * 14; }
+    if (i < SCENES.length - 1) { const t = P(f, s.b - 5, s.b + 3, E.inOut); o *= 1 - t; sc *= lerp(1, 1.14, t); bl += t * 18; }
+    el.style.opacity = o;
+    el.style.transform = `scale(${sc})`;
+    el.style.filter = bl > .2 ? `blur(${bl}px)` : 'none';
+  });
+
+  // ---------- Escena 1 · Hook ----------
+  if (f < 160) {
+    animWords(s1cap, f);
+    // título gigante: ya visible en el frame 0
+    const tp = spring(f + 7, 9, 14);
+    const pulse = [84, 94].reduce((a, k) => a + (f >= k ? Math.max(0, Math.sin((f - k) / 10 * Math.PI)) * .05 * (f < k + 10 ? 1 : 0) : 0), 0);
+    set($('s1t1'), { opacity: P(f, -7, -2), transform: `scale(${lerp(.4, 1, tp) + pulse})` });
+    const bp = spring(f + 3, 9, 15);
+    const red = P(f, 136, 140);
+    const shake = f >= 137 && f < 152 ? Math.sin(f * 3.3) * 10 * (1 - (f - 137) / 15) : 0;
+    set($('s1blk'), { opacity: P(f, -3, 1), transform: `translateX(${shake}px) scale(${lerp(.3, 1, bp) * (1 + (f >= 137 && f < 145 ? .06 * Math.sin((f - 137) / 8 * Math.PI) : 0))}) rotate(${lerp(-8, -2, Math.min(bp, 1))}deg)` });
+    $('s1blkin').style.background = `linear-gradient(135deg, ${mix('#2A5BDB', '#E0262B', red)}, ${mix('#1240AB', '#B31240', red)})`;
+    const tg = spring(f - 106, 10, 16);
+    set($('s1tag'), { opacity: P(f, 106, 109), transform: `rotate(-7deg) scale(${f < 106 ? .3 : lerp(.3, 1, tg)})` });
+    // dólar de vidrio: cae, rebota, flota y al decir "plata" se cae
+    let y, sx = 1, sy = 1, ry, rz = 0;
+    if (f < 18) { const t = clamp(f / 18); y = lerp(-1500, 0, t * t); ry = lerp(540, 0, t); }
+    else {
+      const k = f - 18;
+      y = -70 * Math.exp(-k / 7) * Math.abs(Math.sin(k * .33)) + Math.sin(f / 30 * 2) * 12;
+      const sq = Math.exp(-k / 3);
+      sx = 1 + .14 * sq; sy = 1 - .14 * sq;
+      ry = Math.sin(f / 30 * 1.4) * 22;
+    }
+    if (f >= 140) { const k = f - 140; y += 1500 * Math.pow(k / 22, 2); rz = k * 1.6; }
+    set($('s1dollar'), { transform: `perspective(1400px) translateY(${y}px) rotateY(${ry}deg) rotate(${rz}deg) scale(${sx}, ${sy})` });
+    const h = clamp(1 - Math.abs(y) / 900);
+    set($('s1shadow'), { opacity: P(f, 4, 18) * h * (1 - P(f, 140, 150)), transform: `scale(${lerp(.4, 1, h)})` });
+    set($('s1glow'), { opacity: P(f, 10, 22) * (.75 + .25 * Math.sin(f / 9)) * (1 - P(f, 140, 152)), transform: `scale(${1 + (f >= 18 ? .25 * Math.exp(-(f - 18) / 6) : 0)})` });
+    COINS.forEach((c, i) => {
+      const k = f - 18;
+      if (k < 0 || k > 40) { c.el.style.opacity = 0; return; }
+      const t = k / 30;
+      const x = Math.cos(c.ang) * c.sp * k * 1.1, yy = Math.sin(c.ang) * c.sp * k * 1.1 + 900 * t * t;
+      set(c.el, { opacity: 1 - P(k, 22, 40), transform: `translate(${x}px, ${yy}px)` });
+    });
+    animBubble('s1b1', f, 0); animBubble('s1b2', f, 2); animBubble('s1b3', f, 4, 26); animBubble('s1b4', f, 1, 20);
+  }
+
+  // ---------- Escena 2 · Problema ----------
+  if (f >= 152 && f < 362) {
+    s2caps(f);
+    // horas: 0 -> 5 -> 12
+    const hv = f < 169 ? lerp(0, 5, P(f, 158, 169, E.lin)) : lerp(5, 12, P(f, 200, 214, E.lin));
+    $('s2hv').textContent = '+' + Math.round(hv);
+    const cs = spring(f - 158, 8, 13), ps = spring(f - 162, 8, 13);
+    const hb = [169, 214].reduce((a, k) => a + (f >= k && f < k + 8 ? Math.sin((f - k) / 8 * Math.PI) * .08 : 0), 0);
+    set($('s2hrs'), { opacity: P(f, 158, 163), transform: `translateY(${lerp(140, 0, Math.min(cs, 1)) + Math.sin(f / 30 * 1.3) * 6}px) rotate(${lerp(-10, -2, Math.min(cs, 1))}deg) scale(${lerp(.6, 1, cs) + hb})` });
+    [...$('s2bars').children].forEach((b, i) => b.style.height = (BARS[i] * 100 * P(f, 166 + i * 3, 214 + i * 2, E.inOut)) + '%');
+    // cobrás: 80 -> 45 -> 12
+    const pv = f < 247 ? 80 : f < 270 ? lerp(80, 45, P(f, 247, 270, E.lin)) : lerp(45, 12, P(f, 321, 337, E.lin));
+    $('s2pv').textContent = '$' + Math.round(pv);
+    const hit = f >= 337 && f < 352 ? Math.sin(f * 3.1) * 9 * (1 - (f - 337) / 15) : 0;
+    set($('s2pay'), { opacity: P(f, 162, 167), transform: `translate(${hit}px, ${lerp(140, 0, Math.min(ps, 1)) + Math.sin(f / 30 * 1.2 + 2) * 6}px) rotate(${lerp(10, 2, Math.min(ps, 1))}deg) scale(${lerp(.6, 1, ps)})` });
+    $('s2pv').style.color = f >= 337 ? mix('#FFFFFF', '#FFD9DF', Math.abs(Math.sin((f - 337) / 4))) : '#fff';
+    const drop = P(f, 247, 340, E.inOut);
+    const ptsP = [0, .2, .4, .6, .8, 1].map((x, i) => [x * 385, lerp(20, 95, Math.min(1, drop * 1.2) * (i / 5)) + Math.sin(i * 2.1) * 6]);
+    $('s2pl').setAttribute('d', 'M' + ptsP.map(p => p.join(',')).join(' L'));
+    const last = ptsP[ptsP.length - 1];
+    $('s2pd').setAttribute('cx', last[0]); $('s2pd').setAttribute('cy', last[1]);
+    HCHIPS.forEach((c, i) => {
+      const k = f - c.fr, s = spring(k, 9, 16);
+      set($('s2hc' + i), { opacity: k < 0 ? 0 : P(k, 0, 3) * (1 - P(k, 34, 46)), transform: `translateY(${-k * 5}px) scale(${k < 0 ? .3 : lerp(.3, 1, s)})` });
+    });
+    // clientes: 5 -> 2
+    set($('s2cli'), { opacity: P(f, 245, 252), transform: `translateY(${lerp(30, 0, P(f, 245, 254))}px)` });
+    for (let i = 0; i < 5; i++) {
+      const a = $('s2a' + i), s = spring(f - (248 + i * 2), 10, 17);
+      const gone = (i === 1 || i === 3 || i === 4) ? P(f, 270 + (i % 3) * 2, 278 + (i % 3) * 2) : 0;
+      const keep = (i === 0 || i === 2) && f >= 281 && f < 290 ? Math.sin((f - 281) / 9 * Math.PI) * .12 : 0;
+      set(a, { opacity: (f < 248 + i * 2 ? 0 : 1) * (1 - gone * .82), transform: `scale(${(f < 248 + i * 2 ? .3 : lerp(.3, 1, s)) * (1 - gone * .35) + keep}) translateY(${gone * 30}px)`, filter: gone > 0 ? `grayscale(${gone})` : 'none' });
+    }
+    animChar('s2char', f, { born: 160, blink: [200, 262], shake: f >= 335 ? 6 : 1.5, bob: .6 });
+    set($('s2char').querySelector('.drop'), { opacity: P(f, 322, 327) * (1 - P(f, 350, 356)), transform: `translateY(${P(f, 322, 356, E.lin) * 40}px)` });
+  }
+
+  // ---------- Escena 3 · Solución ----------
+  if (f >= 354 && f < 524) {
+    s3caps(f);
+    const sp = spring(f - 360, 7, 11);
+    const t = f / 30;
+    set($('s3dash'), {
+      opacity: P(f, 359, 366),
+      transform: `perspective(1800px) translateY(${lerp(240, 0, Math.min(sp, 1))}px) rotateX(${lerp(24, 6, Math.min(sp, 1))}deg) rotateY(${-6 + Math.sin(t * .8) * 3}deg) scale(${lerp(.86, 1, Math.min(sp, 1))})`,
+    });
+    const n = Math.floor(clamp((f - 366) / 36) * PROMPT.length);
+    $('s3ptext').textContent = PROMPT.slice(0, n);
+    $('s3caret').style.opacity = (f < 404 || Math.floor(f / 8) % 2 === 0) ? 1 : 0;
+    const done = f >= 512;
+    $('s3stxt').textContent = done ? 'Listo' : 'Procesando';
+    $('s3dot').style.background = done ? '#fff' : '#A4C6FF';
+    $('s3dot').style.opacity = done ? 1 : .4 + .6 * Math.abs(Math.sin(f / 6));
+    set($('s3title'), { opacity: P(f, 404, 410) });
+    ROWS3.forEach((r, i) => {
+      const row = $('s3r' + i), s = spring(f - r.a, 9, 15);
+      set(row, { opacity: P(f, r.a, r.a + 4), transform: `translateX(${lerp(-60, 0, Math.min(s, 1))}px) scale(${f < r.a ? .8 : lerp(.8, 1, s)})` });
+      const pr = P(f, r.a + 2, r.d, E.inOut);
+      row.querySelector('.bar').style.width = (pr * 100) + '%';
+      const ok = f >= r.d;
+      const spin = row.querySelector('.spin'), okc = row.querySelector('.ok');
+      spin.style.opacity = ok ? 0 : 1;
+      spin.style.transform = `rotate(${f * 18}deg)`;
+      okc.style.opacity = ok ? 1 : 0;
+      okc.style.transform = `scale(${ok ? spring(f - r.d, 10, 18) : 0})`;
+      row.style.background = ok ? `rgba(255,255,255,${lerp(.14, .24, P(f, r.d, r.d + 6))})` : 'rgba(255,255,255,.14)';
+    });
+    // botón + cursor + click (camera.wav en 492)
+    const bs = spring(f - 470, 10, 16);
+    const press = f >= 492 && f < 496 ? lerp(1, .9, P(f, 492, 495)) : f >= 496 ? lerp(.9, 1, Math.min(spring(f - 496, 10, 20), 1.06)) : 1;
+    set($('s3btn'), { opacity: P(f, 470, 474), transform: `scale(${(f < 470 ? .5 : lerp(.5, 1, bs)) * press})`,
+      boxShadow: `0 18px 40px rgba(11,46,115,.3), 0 0 ${lerp(0, 70, P(f, 492, 498) * (1 - P(f, 506, 520)) + (f > 498 ? .4 : 0))}px rgba(164,198,255,.95)` });
+    const rp = P(f, 492, 510);
+    set($('s3ripple'), { opacity: f >= 492 ? (1 - rp) : 0, transform: `scale(${rp * 50})` });
+    $('s3fill').style.width = (P(f, 495, 512, E.inOut) * 100) + '%';
+    $('s3ltxt').textContent = f >= 512 ? 'Listo ✓' : f >= 495 ? 'Generando…' : 'Generar';
+    const cp = P(f, 472, 490, E.inOut);
+    const cx = lerp(1000, 735, cp) + Math.sin(cp * Math.PI) * 60, cy = lerp(1820, 1340, cp);
+    const cpress = f >= 492 && f < 498 ? .86 : 1;
+    set($('s3cursor'), { opacity: P(f, 472, 476) * (1 - P(f, 510, 516)), transform: `translate(${cx - 900}px, ${cy - 1700}px) scale(${cpress})` });
+    $('s3shine').style.left = lerp(-300, 1100, P(f, 496, 516, E.inOut)) + 'px';
+    animBubble('s3b1', f, 1, 20); animBubble('s3b2', f, 3, 14);
+  }
+
+  // ---------- Escena 4 · Lección ----------
+  if (f >= 516 && f < 717) {
+    s4caps(f);
+    const xs = spring(f - 558, 9, 14);
+    const sweep = P(f, 562, 590, E.inOut);
+    set($('s4imp'), { opacity: P(f, 558, 561), transform: `scale(${f < 558 ? .3 : lerp(.3, 1, xs)})` });
+    $('s4x3').style.backgroundPosition = `${lerp(100, 0, sweep)}% 0`;
+    const fs = spring(f - 572, 10, 16);
+    set($('s4fast'), { opacity: P(f, 572, 576), transform: `translateX(${lerp(-40, 0, Math.min(fs, 1))}px)` });
+    const cs = spring(f - 522, 7, 11);
+    set($('s4card'), { opacity: P(f, 521, 529), transform: `perspective(1800px) translateY(${lerp(200, 0, Math.min(cs, 1)) + Math.sin(f / 30 * 1.2) * 6}px) rotateX(${lerp(20, 7, Math.min(cs, 1))}deg) scale(${lerp(.9, 1, Math.min(cs, 1))})` });
+    // gráfico + contador $0 -> $221 (valores del SRT, acelerados)
+    const reveal = P(f, 528, 604, E.inOut);
+    const up = f < 648 ? 0 : Math.min(spring(f - 648, 5, 8), 1.08);
+    const pts = BASE.map((v, i) => [i * (760 / (BASE.length - 1)), 340 - (v + BOOST[i] * up) * 330]);
+    const dpath = curve(pts);
+    $('s4line').setAttribute('d', dpath);
+    $('s4area').setAttribute('d', dpath + ' L760,360 L0,360 Z');
+    $('s4clip').setAttribute('width', reveal * 790);
+    const xr = reveal * 760, idx = Math.min(Math.floor(xr / (760 / (BASE.length - 1))), BASE.length - 2);
+    const tt = (xr - pts[idx][0]) / (760 / (BASE.length - 1));
+    const dy = lerp(pts[idx][1], pts[idx + 1][1], clamp(tt));
+    ['s4dot', 's4halo'].forEach(id => { $(id).setAttribute('cx', xr); $(id).setAttribute('cy', dy); });
+    $('s4dot').style.opacity = P(f, 530, 534);
+    $('s4halo').setAttribute('r', 22 + 14 * (1 + Math.sin(f / 4)) / 2 + up * 14);
+    $('s4halo').style.opacity = P(f, 530, 534);
+    const val = f < 604 ? lerp(0, 38, P(f, 528, 604, E.lin)) : f < 648 ? lerp(38, 60, P(f, 604, 648, E.lin)) : lerp(60, 221, P(f, 648, 698, E.out));
+    $('s4v').textContent = '$' + Math.round(val);
+    $('s4v').style.transform = `scale(${1 + (f >= 648 && f < 704 ? Math.sin((f - 648) / 56 * Math.PI) * .1 : 0)})`;
+    $('s4v').style.transformOrigin = '0 70%';
+    $('s4v').style.display = 'inline-block';
+    const bb = spring(f - 613, 10, 17);
+    set($('s4badge'), { opacity: P(f, 613, 616), transform: `scale(${f < 613 ? .3 : lerp(.3, 1, bb)})` });
+    $('s4shine').style.left = lerp(-300, 1100, P(f, 668, 692, E.inOut)) + 'px';
+    for (let i = 0; i < 7; i++) {
+      const st = 670 + i * 3, lt = P(f, st, st + 22, E.out), ang = i / 7 * Math.PI * 2 + .4;
+      $('s4sp' + i).setAttribute('transform', `translate(${xr + Math.cos(ang) * 90 * lt},${dy + Math.sin(ang) * 90 * lt}) scale(${(1 - lt) * 1.6 * (f >= st ? 1 : 0)}) rotate(${f * 6})`);
+    }
+    animBubble('s4b1', f, 2, 18); animBubble('s4b2', f, 5, 12);
+  }
+
+  // ---------- Escena 5 · CTA ----------
+  if (f >= 709) {
+    s5cap(f);
+    const cs = spring(f - 787, 9, 14);
+    set($('s5com'), { opacity: P(f, 787, 790), transform: `scale(${f < 787 ? .4 : lerp(.4, 1, cs)})` });
+    const ks = spring(f - 809, 9, 15);
+    const glow = 40 + (f > 818 ? 18 * (1 + Math.sin((f - 818) / 7)) : 0);
+    set($('s5blk'), { opacity: P(f, 809, 812), transform: `scale(${f < 809 ? .3 : lerp(.3, 1, ks)}) rotate(${lerp(-6, -2, Math.min(ks, 1))}deg)` });
+    $('s5blk').firstElementChild.style.setProperty('--gl', glow + 'px');
+    animWords(s5sub, f);
+    animChar('s5char', f, { born: 716, blink: [770, 846, 884] });
+    const ds = spring(f - 718, 8, 13);
+    const hop = f >= 838 ? Math.sin(clamp((f - 838) / 16) * Math.PI) : 0;
+    set($('s5dm'), { opacity: P(f, 718, 723), transform: `translateY(${Math.sin(f / 30 * 2) * 8 - hop * 30}px) rotate(${lerp(14, 4, Math.min(ds, 1)) - hop * 8}deg) scale(${f < 718 ? .3 : lerp(.3, 1, ds) + hop * .06})` });
+    $('s5plane').style.transform = `translate(${hop * 34}px, ${-hop * 34}px) rotate(${-hop * 12}deg)`;
+    const bgs = spring(f - 813, 10, 18);
+    $('s5badge').style.transform = `scale(${f < 813 ? 0 : bgs})`;
+    animBubble('s5b1', f, 1, 16); animBubble('s5b2', f, 4, 24);
+  }
+};
+
+window.TOTAL_FRAMES = TOTAL;
+renderFrame(0);
+</script>
+</body>
+</html>
