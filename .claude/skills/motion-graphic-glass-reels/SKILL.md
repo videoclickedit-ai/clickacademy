@@ -1,29 +1,62 @@
 ---
 name: motion-graphic-glass-reels
-description: Crea y RENDERIZA videos de MOTION GRAPHICS verticales (Reels / TikTok / Shorts 9:16, 1080x1920, 30 fps) con estética de vidrio 3D / glassmorphism — fondos claros con pozos de azul cobalto, tarjetas de vidrio esmerilado, personaje burbuja, captions palabra por palabra sincronizados a la voz en off, contadores, dashboards con click, gráficos que crecen y CTA con notificación — y entrega el MP4 terminado con voz + SFX, sin After Effects (HTML + Chromium + ffmpeg). Usar SIEMPRE que pidan "haceme un motion graphic", "animá este guion", "video animado con esta voz en off", "reel en motion graphics", "estilo vidrio / glass / burbujas 3D", "como esta referencia pero con mi guion", "creámelo acá, no en After", o cuando entreguen un guion por escenas + una voz (ElevenLabs u otra) y quieran el video listo. También para cambiar textos, tiempos o colores de un reel ya hecho con esta skill y re-renderizarlo. NO usar para editar video filmado (talking head, cortes de cámara) ni para generar clips con IA de video.
+description: Motion graphics verticales (Reels/TikTok/Shorts 9:16) de punta a punta. ANALIZA un reel de referencia y entrega un informe con ADN visual, ficha técnica, storyboard con coordenadas, keyframes, sound design y el GUION ADAPTADO a lo que el usuario quiere comunicar, con indicaciones claras escena por escena. Y PRODUCE el video terminado (MP4 con voz + SFX) renderizado acá con HTML + Chromium + ffmpeg, sin After Effects. Estilo base vidrio 3D / glassmorphism, adaptable al de la referencia (dark neón, flat, etc.). Usar SIEMPRE que pidan "analizá este reel", "sacá el ADN visual", "desarmá esta referencia", "adaptá este guion a mi mensaje", "storyboard de este video", "haceme un motion graphic", "animá este guion", "video animado con esta voz", "como esta referencia pero con mi guion", o cuando suban un video de referencia, un guion por escenas o una voz en off para un reel animado. También para cambiar y re-renderizar un reel hecho con esta skill. NO usar para editar video filmado (talking head).
 ---
 
 # Motion Graphic · Glass Reels
+
+Dos modos, que suelen ir encadenados:
+
+| Modo | Cuándo | Entregás |
+|---|---|---|
+| **1 · Analizar y adaptar** | Suben un reel de referencia y quieren entenderlo o usarlo para su mensaje | `informe.md`: ADN, ficha técnica, storyboard medido, guion adaptado y qué poner en cada escena |
+| **2 · Producir** | Hay guion (o un informe) + voz en off | MP4 terminado con voz + SFX |
+
+Si suben una referencia **y** su guion/voz, hacé el 1 y seguí con el 2 sin preguntar. Si solo suben
+la referencia, entregá el informe y cerrá con una línea: "¿Lo produzco? Mandame la voz en off".
+
+## Modo 1 · Analizar y adaptar
+
+1. **Archivo.** Necesitás el video. Si mandan un link y no se puede bajar, pedí el archivo.
+2. **Medir.** `python3 scripts/analizar_referencia.py ref.mp4 <proyecto>/ref`. Leé el resumen y
+   `analisis.json` (ficha, cambios de plano, paleta HEX, tramos de voz, golpes de sonido).
+3. **Mirar.** Abrí las `hoja_XX.png` (narrativa y texto en pantalla) y cada `escena_XX_grilla.png`
+   (grilla del 10 %: de ahí salen las coordenadas X/Y en %). Leé el guion del texto en pantalla. Si
+   no hay texto ni transcripción, pedíselo al usuario: no lo inventes.
+4. **Mensaje del usuario.** Tema, público, dolor y CTA. Usá lo que ya se sepa de la conversación.
+   Si falta algo, preguntá una sola vez, todo junto.
+5. **Escribir** `<proyecto>/informe.md` con la plantilla y las reglas de adaptación de
+   `references/informe-referencia.md` (secciones A–P). Separá lo medido de lo estimado. El guion
+   adaptado mantiene la estructura de la referencia (beats, duración y palabras por beat) y cambia el
+   contenido. Cada escena del storyboard adaptado dice qué texto, qué elemento, dónde, qué hace,
+   cuándo, qué SFX y qué color.
+6. **Entregar.** Mandá el archivo y, en el chat, 4–5 líneas: estilo en una frase, estructura, guion
+   adaptado completo y qué hace falta para producirlo.
+
+## Modo 2 · Producir
 
 Entregás un **MP4 terminado** (video + voz + SFX), no un tutorial de After Effects. Todo se arma
 en HTML, Chromium captura frame por frame y ffmpeg codifica. La plantilla en
 `assets/plantilla/` es un reel real aprobado por el usuario: partí siempre de ahí.
 
-## Qué pedir (una sola vez, solo si falta)
+El motor no está atado al vidrio: si viene de un informe con otro estilo (dark neón, flat…),
+cambiá los tokens (`:root`, `BG`, glow, tipografía) según el ADN y seguí el storyboard adaptado (N).
 
-- **Guion por escenas**: texto exacto de la voz + qué se ve en cada escena.
+### Qué pedir (una sola vez, solo si falta)
+
+- **Guion por escenas**: texto exacto de la voz + qué se ve en cada escena (o el informe del Modo 1).
 - **Voz en off** (mp3/wav). Los tiempos salen de la voz: sin ella, los cortes son adivinados.
   Si no está, preguntá si la tiene antes de animar.
-- Opcional: **video de referencia** y paleta/marca. Sin referencia, usá el sistema por defecto.
+- Opcional: **video de referencia**, paleta/marca y **sonidos propios**.
 
-## Flujo
+### Flujo
 
 1. **Proyecto.** Creá `<proyecto>/` y copiá `assets/plantilla/index.html` y `sfx_events.json`.
    Poné la voz en `<proyecto>/audio/vo.mp3`.
 
-2. **Referencia (si hay).** `python3 scripts/analizar_referencia.py ref.mp4 <proyecto>/ref` y
-   mirá las hojas. Copiá los colores reales que imprime, no los que "parecen". Anotá: tipo de
-   fondo, jerarquía tipográfica, cómo entra cada elemento, cómo son las transiciones.
+2. **Referencia (si hay).** Si ya hay informe, usalo. Si no, corré
+   `python3 scripts/analizar_referencia.py ref.mp4 <proyecto>/ref` y mirá las hojas. Copiá los
+   colores reales que imprime, no los que "parecen".
 
 3. **Tiempos.** `python3 scripts/tiempos_vo.py <proyecto>/audio/vo.mp3`. Asigná el guion a los
    tramos en orden y repartí las sílabas de cada tramo; ajustá cada palabra al corte más cercano.
