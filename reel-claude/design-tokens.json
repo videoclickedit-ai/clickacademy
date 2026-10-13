@@ -1,13 +1,15 @@
 {
   "meta": {
     "proyecto": "Reel Claude",
-    "resolucion": [1080, 1920],
+    "resolucion": [
+      1080,
+      1920
+    ],
     "fps": 30,
     "duracion_seg": 27,
     "duracion_frames": 810,
     "referencia": "GatesFX: vidrio 3D, fondos claros con pozos de azul, captions chicos + palabras de impacto condensadas"
   },
-
   "color": {
     "azul": {
       "blanco": "#FFFFFF",
@@ -32,16 +34,39 @@
       "alerta": "#B31240"
     }
   },
-
   "fondos": {
     "azul": {
       "uso": "Escenas 1, 3, 4, 5",
       "efecto_ae": "4-Color Gradient (Blend 100)",
       "puntos": [
-        { "pos": [920, 140], "color": "#FFFFFF" },
-        { "pos": [60, 1180], "color": "#2A5BDB" },
-        { "pos": [1040, 1250], "color": "#A4C6FF" },
-        { "pos": [320, 1860], "color": "#C9D9F8" }
+        {
+          "pos": [
+            920,
+            140
+          ],
+          "color": "#FFFFFF"
+        },
+        {
+          "pos": [
+            60,
+            1180
+          ],
+          "color": "#2A5BDB"
+        },
+        {
+          "pos": [
+            1040,
+            1250
+          ],
+          "color": "#A4C6FF"
+        },
+        {
+          "pos": [
+            320,
+            1860
+          ],
+          "color": "#C9D9F8"
+        }
       ],
       "css": "radial-gradient(60% 40% at 85% 7%, #FFFFFF 0%, transparent 70%), radial-gradient(55% 35% at 5% 62%, #2A5BDB 0%, transparent 75%), linear-gradient(180deg, #E4ECFB 0%, #A4C6FF 65%, #C9D9F8 100%)"
     },
@@ -49,21 +74,47 @@
       "uso": "Escena 2",
       "efecto_ae": "4-Color Gradient (Blend 100)",
       "puntos": [
-        { "pos": [920, 140], "color": "#FFFFFF" },
-        { "pos": [60, 1180], "color": "#B31240" },
-        { "pos": [1040, 1250], "color": "#F6C9D3" },
-        { "pos": [320, 1860], "color": "#E0262B" }
+        {
+          "pos": [
+            920,
+            140
+          ],
+          "color": "#FFFFFF"
+        },
+        {
+          "pos": [
+            60,
+            1180
+          ],
+          "color": "#B31240"
+        },
+        {
+          "pos": [
+            1040,
+            1250
+          ],
+          "color": "#F6C9D3"
+        },
+        {
+          "pos": [
+            320,
+            1860
+          ],
+          "color": "#E0262B"
+        }
       ],
       "css": "radial-gradient(60% 40% at 85% 7%, #FFFFFF 0%, transparent 70%), radial-gradient(55% 35% at 5% 62%, #B31240 0%, transparent 75%), linear-gradient(180deg, #FFFFFF 0%, #F6C9D3 55%, #E0262B 100%)"
     },
     "transicion_azul_rojo": "Animar puntos 2 y 4: azul -> #6B3FA0 (frame 6) -> rojo (frame 12). Vuelta a azul igual, invertido.",
     "anti_banding": "Noise 2% (Use Color Noise OFF) sobre el fondo"
   },
-
   "vidrio": {
     "tarjeta_ice": {
       "uso": "Tarjetas de texto, frase escena 4",
-      "fill": { "color": "#FFFFFF", "opacidad": 22 }
+      "fill": {
+        "color": "#FFFFFF",
+        "opacidad": 22
+      }
     },
     "tarjeta_cobalto": {
       "uso": "Tarjetas del caos, dashboard, card del grafico (look de la referencia)",
@@ -71,14 +122,26 @@
         "tipo": "lineal",
         "angulo": 135,
         "stops": [
-          { "color": "#EAF1FF", "opacidad": 45 },
-          { "color": "#2A5BDB", "opacidad": 80 }
+          {
+            "color": "#EAF1FF",
+            "opacidad": 45
+          },
+          {
+            "color": "#2A5BDB",
+            "opacidad": 80
+          }
         ]
       }
     },
     "tamanos": {
-      "grande": [760, 520],
-      "chica": [420, 280],
+      "grande": [
+        760,
+        520
+      ],
+      "chica": [
+        420,
+        280
+      ],
       "radio_grande": 40,
       "radio_chica": 28
     },
@@ -89,7 +152,12 @@
       "opacidad_arriba": 70,
       "opacidad_abajo": 15
     },
-    "inner_glow": { "modo": "Screen", "color": "#FFFFFF", "opacidad": 35, "tamano": 18 },
+    "inner_glow": {
+      "modo": "Screen",
+      "color": "#FFFFFF",
+      "opacidad": 35,
+      "tamano": 18
+    },
     "backdrop_blur": {
       "ae": "Adjustment Layer con Gaussian Blur 40 (Repeat Edge Pixels ON) + Alpha Matte = forma de la tarjeta",
       "css": "backdrop-filter: blur(24px) saturate(140%)"
@@ -104,58 +172,131 @@
     },
     "perspectiva_3d": "Capa 3D, Rotacion Y entre -12 y 12 grados, Rotacion X 6 grados, flotacion con wiggle(0.5, 12) en posicion"
   },
-
   "personaje": {
     "cabeza": {
       "diametro": 220,
       "fill": "Radial: centro desplazado arriba-izq #FFFFFF 90% -> borde #2A5BDB 85%",
       "rim": "Stroke 3px #FFFFFF 60%",
-      "inner_glow": { "color": "#FFFFFF", "opacidad": 50, "tamano": 30 }
+      "inner_glow": {
+        "color": "#FFFFFF",
+        "opacidad": 50,
+        "tamano": 30
+      }
     },
     "cuerpo": {
-      "tamano": [440, 560],
+      "tamano": [
+        440,
+        560
+      ],
       "forma": "Capsula (radio 220 arriba)",
       "fill": "Lineal vertical #FFFFFF 70% -> #A4C6FF 0% (se funde abajo como en la referencia)"
     },
-    "cara": { "ojos": "2 circulos 14px #0B2E73", "sonrisa": "Stroke 4px #0B2E73, Round Cap" },
+    "cara": {
+      "ojos": "2 circulos 14px #0B2E73",
+      "sonrisa": "Stroke 4px #0B2E73, Round Cap"
+    },
     "variante_escena_2": "Nucleo de la cabeza a #B31240 + glow #E0262B 60% detras"
   },
-
   "efectos_globales": {
-    "glow": { "efecto": "Glow", "threshold": 70, "radio": 60, "intensidad": 0.6, "colores": ["#FFFFFF", "#A4C6FF"] },
-    "glow_resaltado": { "modo": "Screen", "color": "#A4C6FF", "opacidad": 50, "tamano": 40 },
-    "dof": { "efecto": "Camera Lens Blur", "fondo": 12, "primer_plano": 25 }
-  },
-
-  "tipografia": {
-    "fuentes": {
-      "principal": "Montserrat",
-      "impacto": "Anton",
-      "alternativa": "Inter ExtraBold"
+    "glow": {
+      "efecto": "Glow",
+      "threshold": 70,
+      "radio": 60,
+      "intensidad": 0.6,
+      "colores": [
+        "#FFFFFF",
+        "#A4C6FF"
+      ]
     },
-    "estilos": {
-      "caption_vo": { "fuente": "Montserrat SemiBold", "px": 56, "leading": 64, "tracking": 0, "color": "#1A1F2E", "pos_y": 520 },
-      "titulo": { "fuente": "Montserrat ExtraBold", "px": 96, "leading": 104, "tracking": -10, "color": "#0B2E73" },
-      "contador": { "fuente": "Montserrat ExtraBold", "px": 150, "tracking": -20, "color": "#1240AB -> #B31240", "alineacion": "izquierda, ancla fija (evita que tiemble)" },
-      "impacto": { "fuente": "Anton", "px": 180, "leading": 170, "mayusculas": true, "color": "#0B2E73" },
-      "impacto_italica": { "fuente": "Montserrat Medium Italic", "px": 72, "color": "#1240AB" },
-      "resaltado_bloque": {
-        "fuente": "Anton",
-        "px": 190,
-        "color": "#FFFFFF",
-        "bloque": { "fill": "#1240AB", "radio": 28, "padding": [16, 40], "glow": "#A4C6FF 50% 40px" }
-      },
-      "secundario": { "fuente": "Montserrat Medium", "px": 36, "color": "#1A1F2E", "opacidad": 75 },
-      "ui": { "fuente": "Montserrat SemiBold", "px": 26, "color": "#FFFFFF", "opacidad": 85 }
+    "glow_resaltado": {
+      "modo": "Screen",
+      "color": "#A4C6FF",
+      "opacidad": 50,
+      "tamano": 40
+    },
+    "dof": {
+      "efecto": "Camera Lens Blur",
+      "fondo": 12,
+      "primer_plano": 25
     }
   },
-
+  "tipografia": {
+    "fuentes": {
+      "principal": "Inter",
+      "impacto": "Inter Display Black",
+      "ideal_si_estan_instaladas": "Montserrat + Anton"
+    },
+    "estilos": {
+      "caption_vo": {
+        "fuente": "Inter SemiBold",
+        "px": 56,
+        "leading": 64,
+        "tracking": 0,
+        "color": "#1A1F2E",
+        "pos_y": 520
+      },
+      "titulo": {
+        "fuente": "Inter Display Black",
+        "px": 96,
+        "leading": 104,
+        "tracking": -10,
+        "color": "#0B2E73"
+      },
+      "contador": {
+        "fuente": "Inter Display Black (tabular-nums)",
+        "px": 150,
+        "tracking": -20,
+        "color": "#1240AB -> #B31240",
+        "alineacion": "izquierda, ancla fija (evita que tiemble)"
+      },
+      "impacto": {
+        "fuente": "Inter Display Black",
+        "px": 180,
+        "leading": 170,
+        "mayusculas": true,
+        "color": "#0B2E73"
+      },
+      "impacto_italica": {
+        "fuente": "Inter Display Bold Italic",
+        "px": 72,
+        "color": "#1240AB"
+      },
+      "resaltado_bloque": {
+        "fuente": "Inter Display Black",
+        "px": 190,
+        "color": "#FFFFFF",
+        "bloque": {
+          "fill": "#1240AB",
+          "radio": 28,
+          "padding": [
+            16,
+            40
+          ],
+          "glow": "#A4C6FF 50% 40px"
+        }
+      },
+      "secundario": {
+        "fuente": "Inter Medium",
+        "px": 36,
+        "color": "#1A1F2E",
+        "opacidad": 75
+      },
+      "ui": {
+        "fuente": "Inter SemiBold",
+        "px": 26,
+        "color": "#FFFFFF",
+        "opacidad": 85
+      }
+    }
+  },
   "layout": {
     "margen_lateral": 80,
-    "zona_texto_y": [250, 1420],
+    "zona_texto_y": [
+      250,
+      1420
+    ],
     "nota": "Abajo de y=1420 queda tapado por caption/UI de Reels"
   },
-
   "movimiento": {
     "pop": "Escala 0 -> 112% (f6) -> 100% (f10), Easy Ease, influencia salida 85%",
     "palabra_por_palabra": "Opacidad 0->100 + Y +20px->0 en 4 frames, por palabra al ritmo de la VO",

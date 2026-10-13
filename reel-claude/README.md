@@ -3,6 +3,19 @@
 Referencia visual: GatesFX (vidrio 3D, fondos claros con pozos de azul).
 Sistema visual completo: [`design-tokens.json`](design-tokens.json).
 
+## Video (sin After Effects)
+
+Render final: [`render/reel-claude.mp4`](render/reel-claude.mp4).
+
+- `video/index.html` — las 5 escenas; cada frame se calcula con `renderFrame(f)`.
+- `video/render.js` — Chromium captura los 810 frames y ffmpeg los codifica.
+- `video/sfx.py` — sintetiza los SFX y los mezcla con `video/audio/vo.mp3`.
+- `video/build.sh` — corre todo y deja el MP4 en `render/` (-14 LUFS).
+
+Previsualizar frames sueltos: `node video/render.js --stills 0,256,723`.
+
+Tipografía: Inter / Inter Display (Montserrat y Anton no se pudieron descargar en este entorno).
+
 ## Mapa de tiempos (desde la VO de ElevenLabs, 26,2 s)
 
 Tiempos estimados por pausas del audio (±3 frames). Verificar contra la forma de onda en AE.
